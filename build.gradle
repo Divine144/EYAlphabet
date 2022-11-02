@@ -115,6 +115,7 @@ repositories {
             includeGroup 'curse.maven'
         }
     }
+    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
 }
 
 mixin {
@@ -134,16 +135,25 @@ dependencies {
     // Capability Syncer
     hundredMedia.addJarJarDep('dev._100media.capabilitysyncer:capabilitysyncer', capabilitysyncer_version, capabilitysyncer_version_range, null, '1.19')
 
+    // 100 Media Geckolib
+    hundredMedia.addJarJarDep('dev._100media.hundredmediageckolib:hundredmediageckolib', hundredmediageckolib_version, hundredmediageckolib_version_range)
+
+    // 100 Media Abilities
+    hundredMedia.addJarJarDep('dev._100media.hundredmediaabilities:hundredmediaabilities', hundredmediaabilities_version, hundredmediaabilities_version_range, 'fat','1.19')
+
     // Suggestion Provider Fix
     runtimeOnly fg.deobf("curse.maven:suggestion-provider-fix-469647:${suggestion_provider_fix_file_id}")
+
+    // Geckolib
+    hundredMedia.addJarJarDep('software.bernie.geckolib:geckolib-forge-1.19', geckolib_version, geckolib_version_range, null, null)
 }
 
 def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', "${mod_id}.mixins.json".toString()]
 def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
 def replaceProperties = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version,
-        mod_authors: mod_authors, mod_description: mod_description,
-        minecraft_version_range: minecraft_version_range, forge_version_range: forge_version_range,
-        loader_version_range: loader_version_range]
+                         mod_authors: mod_authors, mod_description: mod_description,
+                         minecraft_version_range: minecraft_version_range, forge_version_range: forge_version_range,
+                         loader_version_range: loader_version_range]
 processResources {
     inputs.properties replaceProperties
     replaceProperties.put 'project', project
