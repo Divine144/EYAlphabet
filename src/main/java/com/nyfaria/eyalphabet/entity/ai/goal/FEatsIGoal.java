@@ -28,7 +28,7 @@ public class FEatsIGoal extends TargetGoal {
                 timer = 0;
             }
         }
-        else this.entity.setShouldAttack(false);
+        else this.entity.setShouldAttackI(false);
     }
 
     @Override
@@ -50,6 +50,6 @@ public class FEatsIGoal extends TargetGoal {
 
     @Override
     public boolean canUse() {
-        return this.entity.getShouldAttack();
+        return this.entity.getShouldAttackI();
     }
 }

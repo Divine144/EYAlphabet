@@ -11,7 +11,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,13 +20,10 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class E2Entity extends Animal implements IAnimatable {
+public class E2Entity extends AlphabetEntity {
 
-    protected final AnimationFactory factory = GeckoLibUtil.createFactory(this);
-
-    protected E2Entity(EntityType<? extends Animal> pEntityType, Level pLevel) {
+    protected E2Entity(EntityType<? extends E2Entity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
@@ -48,8 +44,13 @@ public class E2Entity extends Animal implements IAnimatable {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new WalkToPairGoal(this, 1.0F, new BlockPos(0, 0, 0), 0));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.5F));
+        this.goalSelector.addGoal(1, new WalkToPairGoal(this, 1.0F, new BlockPos(0, 0, 0)));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.5F) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && E2Entity.this.isInWaterOrBubble();
+            }
+        });
     }
 
     @Nullable

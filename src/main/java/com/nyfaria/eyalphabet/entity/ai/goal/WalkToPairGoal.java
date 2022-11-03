@@ -15,8 +15,8 @@ public class WalkToPairGoal extends MoveToBlockGoal {
 
     private final Animal entity;
 
-    public WalkToPairGoal(PathfinderMob pMob, double pSpeedModifier, BlockPos pos, int pSearchRange) {
-        super(pMob, pSpeedModifier, pSearchRange);
+    public WalkToPairGoal(PathfinderMob pMob, double pSpeedModifier, BlockPos pos) {
+        super(pMob, pSpeedModifier, 0);
         this.blockPos = pos;
         this.entity = (Animal) pMob;
     }

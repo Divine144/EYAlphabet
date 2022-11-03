@@ -1,5 +1,6 @@
 package com.nyfaria.eyalphabet.entity;
 
+import com.nyfaria.eyalphabet.entity.ai.goal.HostileAlphabetGoal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -14,8 +15,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +29,8 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 public class AlphabetEntity extends Animal implements IAnimatable {
 
     private static final EntityDataAccessor<Integer> LETTER_ID = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> SHOULD_BE_HOSTILE = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.BOOLEAN);
+
     protected final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     public AlphabetEntity(EntityType<? extends AlphabetEntity> pEntityType, Level pLevel) {
@@ -39,6 +40,7 @@ public class AlphabetEntity extends Animal implements IAnimatable {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(LETTER_ID, RandomSource.create().nextIntBetweenInclusive(0, 16));
+        this.entityData.define(SHOULD_BE_HOSTILE, false);
     }
 
     @Override
@@ -56,9 +58,14 @@ public class AlphabetEntity extends Animal implements IAnimatable {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new PanicGoal(this, 2.0D));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.of(Items.WHEAT), false));
+        this.goalSelector.addGoal(1, new HostileAlphabetGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(2, new PanicGoal(this, 2.0D) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !AlphabetEntity.this.getShouldBeHostile();
+            }
+        });
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
     }
@@ -85,6 +92,14 @@ public class AlphabetEntity extends Animal implements IAnimatable {
 
     public int getLetterID() {
         return this.entityData.get(LETTER_ID);
+    }
+
+    public boolean getShouldBeHostile() {
+        return this.entityData.get(SHOULD_BE_HOSTILE);
+    }
+
+    public void setShouldBeHostile(boolean shouldBeHostile) {
+        this.entityData.set(SHOULD_BE_HOSTILE, shouldBeHostile);
     }
 
     private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {

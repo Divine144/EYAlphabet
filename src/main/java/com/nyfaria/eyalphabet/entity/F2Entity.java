@@ -1,8 +1,6 @@
 package com.nyfaria.eyalphabet.entity;
 
 import com.nyfaria.eyalphabet.entity.ai.goal.FEatsIGoal;
-import com.nyfaria.eyalphabet.entity.ai.goal.WalkToPairGoal;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -30,30 +28,30 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class F2Entity extends Animal implements IAnimatable {
+public class F2Entity extends AlphabetEntity {
 
-    private static final EntityDataAccessor<Boolean> SHOULD_ATTACK = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SHOULD_ATTACK_I = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
 
     protected final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-    protected F2Entity(EntityType<? extends Animal> pEntityType, Level pLevel) {
+    protected F2Entity(EntityType<? extends F2Entity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(SHOULD_ATTACK, false);
+        this.entityData.define(SHOULD_ATTACK_I, false);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
-        this.entityData.set(SHOULD_ATTACK, nbt.getBoolean("shouldAttack"));
+        this.entityData.set(SHOULD_ATTACK_I, nbt.getBoolean("shouldAttack"));
         super.readAdditionalSaveData(nbt);
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag nbt) {
-        nbt.putBoolean("shouldAttack", this.entityData.get(SHOULD_ATTACK));
+        nbt.putBoolean("shouldAttack", this.entityData.get(SHOULD_ATTACK_I));
         super.addAdditionalSaveData(nbt);
     }
 
@@ -64,12 +62,6 @@ public class F2Entity extends Animal implements IAnimatable {
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(ServerLevel pLevel, AgeableMob pOtherParent) {
-        return null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -86,16 +78,16 @@ public class F2Entity extends Animal implements IAnimatable {
         return factory;
     }
 
-    public boolean getShouldAttack() {
-        return this.entityData.get(SHOULD_ATTACK);
+    public boolean getShouldAttackI() {
+        return this.entityData.get(SHOULD_ATTACK_I);
     }
 
-    public void setShouldAttack(boolean shouldAttack) {
-        this.entityData.set(SHOULD_ATTACK, shouldAttack);
+    public void setShouldAttackI(boolean shouldAttack) {
+        this.entityData.set(SHOULD_ATTACK_I, shouldAttack);
     }
 
     private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {
-        if (this.getShouldAttack() && this.getTarget() != null) {
+        if (this.getShouldAttackI() && this.getTarget() != null) {
 
         }
         return PlayState.STOP;
