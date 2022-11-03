@@ -5,6 +5,7 @@ import com.nyfaria.eyalphabet.entity.renderer.AlphabetEntityRenderer;
 import com.nyfaria.eyalphabet.init.EntityInit;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -13,7 +14,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class ClientModEvents {
 
     @SubscribeEvent
-    public static void init(final FMLClientSetupEvent event) {
-        EntityRenderers.register(EntityInit.ALPHABET_ENTITY.get(), AlphabetEntityRenderer::new);
+    public static void init(final EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(EntityInit.ALPHABET_ENTITY.get(), AlphabetEntityRenderer::new);
     }
 }

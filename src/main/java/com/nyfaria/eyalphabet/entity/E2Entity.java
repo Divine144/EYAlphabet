@@ -1,10 +1,8 @@
 package com.nyfaria.eyalphabet.entity;
 
+import com.nyfaria.eyalphabet.entity.ai.goal.HostileAlphabetGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.WalkToPairGoal;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -12,8 +10,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -23,40 +19,21 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class E2Entity extends AlphabetEntity {
 
-    protected E2Entity(EntityType<? extends E2Entity> pEntityType, Level pLevel) {
+    public E2Entity(EntityType<? extends E2Entity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-    }
-
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
-        super.readAdditionalSaveData(nbt);
-    }
-
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag nbt) {
-        super.addAdditionalSaveData(nbt);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new WalkToPairGoal(this, 1.0F, new BlockPos(0, 0, 0)));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.5F) {
+        this.goalSelector.addGoal(2, new HostileAlphabetGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.5F) {
             @Override
             public boolean canUse() {
-                return super.canUse() && E2Entity.this.isInWaterOrBubble();
+                return E2Entity.this.isInWaterOrBubble();
             }
         });
-    }
-
-    @Nullable
-    @Override
-    public AgeableMob getBreedOffspring(ServerLevel pLevel, AgeableMob pOtherParent) {
-        return null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {

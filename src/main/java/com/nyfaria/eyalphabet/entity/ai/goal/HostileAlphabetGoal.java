@@ -2,6 +2,7 @@ package com.nyfaria.eyalphabet.entity.ai.goal;
 
 import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
 import com.nyfaria.eyalphabet.entity.AlphabetEntity;
+import com.nyfaria.eyalphabet.entity.F2Entity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -23,7 +24,7 @@ public class HostileAlphabetGoal extends MeleeAttackGoal {
 
     @Override
     public boolean canUse() {
-        return this.mob.getShouldBeHostile();
+        return this.mob.getShouldBeHostile() || !(this.mob instanceof F2Entity entity && entity.getShouldAttackI());
     }
 
     @Override

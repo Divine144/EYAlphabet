@@ -1,12 +1,11 @@
 package com.nyfaria.eyalphabet.entity;
 
 import com.nyfaria.eyalphabet.entity.ai.goal.FEatsIGoal;
+import com.nyfaria.eyalphabet.entity.ai.goal.HostileAlphabetGoal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -15,11 +14,9 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -32,9 +29,7 @@ public class F2Entity extends AlphabetEntity {
 
     private static final EntityDataAccessor<Boolean> SHOULD_ATTACK_I = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
 
-    protected final AnimationFactory factory = GeckoLibUtil.createFactory(this);
-
-    protected F2Entity(EntityType<? extends F2Entity> pEntityType, Level pLevel) {
+    public F2Entity(EntityType<? extends F2Entity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
@@ -59,9 +54,10 @@ public class F2Entity extends AlphabetEntity {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new FEatsIGoal(this));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(2, new HostileAlphabetGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

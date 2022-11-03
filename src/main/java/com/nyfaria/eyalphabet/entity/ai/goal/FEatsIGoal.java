@@ -50,6 +50,6 @@ public class FEatsIGoal extends TargetGoal {
 
     @Override
     public boolean canUse() {
-        return this.entity.getShouldAttackI();
+        return this.entity.getShouldAttackI() && !this.entity.getShouldBeHostile();
     }
 }

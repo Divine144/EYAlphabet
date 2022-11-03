@@ -1,6 +1,7 @@
 package com.nyfaria.eyalphabet.entity.ai.goal;
 
 
+import com.nyfaria.eyalphabet.entity.AlphabetEntity;
 import com.nyfaria.eyalphabet.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,12 +14,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class WalkToPairGoal extends MoveToBlockGoal {
 
-    private final Animal entity;
+    private final AlphabetEntity entity;
 
     public WalkToPairGoal(PathfinderMob pMob, double pSpeedModifier, BlockPos pos) {
         super(pMob, pSpeedModifier, 0);
         this.blockPos = pos;
-        this.entity = (Animal) pMob;
+        this.entity = (AlphabetEntity) pMob;
     }
 
     @Override
@@ -46,6 +47,6 @@ public class WalkToPairGoal extends MoveToBlockGoal {
 
     @Override
     public boolean canUse() {
-        return !this.isReachedTarget() && !this.entity.isInWaterOrBubble();
+        return !this.isReachedTarget() && !this.entity.isInWaterOrBubble() && !this.entity.getShouldBeHostile();
     }
 }

@@ -9,9 +9,16 @@ import com.nyfaria.eyalphabet.entity.F2Entity;
 import com.nyfaria.eyalphabet.util.Util;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.ArrayDeque;
+import java.util.Map;
+import java.util.Queue;
 
 @Mod.EventBusSubscriber(modid = EYAlphabet.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CommonForgeEvents {
@@ -38,6 +45,14 @@ public class CommonForgeEvents {
                                         }))
                             )
                     )
+        );
+        dispatcher.register(Commands.literal("giant_pit")
+                .then(Commands.argument("relativePlayer", EntityArgument.player())
+                        .executes(context -> {
+                            Queue<Map<BlockPos, BlockState>> wtf = new ArrayDeque<>(); // One queue for half side another for the other side?
+                            return Command.SINGLE_SUCCESS;
+                        })
+                )
         );
     }
 }
