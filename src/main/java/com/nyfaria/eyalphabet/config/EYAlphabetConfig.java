@@ -24,6 +24,7 @@ public class EYAlphabetConfig {
 
     public ForgeConfigSpec.IntValue allLettersAttackEachOtherRadius;
     public ForgeConfigSpec.IntValue allLettersAttackEachOtherTimer;
+    public ForgeConfigSpec.IntValue wallsClosingInTimer;
     public ForgeConfigSpec.DoubleValue hostileLettersExplosionChance;
     public ForgeConfigSpec.DoubleValue hostileLettersFireChargeChance;
     public final Function<Level, GlobalPos> h2AndE2blockPosition;
@@ -39,6 +40,7 @@ public class EYAlphabetConfig {
         h2AndE2blockPosition = createBlockPosEntry(builder, "H2 and E2 Block Position");
         allLettersAttackEachOtherRadius = builder.comment("Radius that all letters start attacking each other for").defineInRange("attackRadius", 30, 5, 1000);
         allLettersAttackEachOtherTimer = builder.comment("Time (in seconds) before all letters that are hostile turn non-hostile").defineInRange("hostileTimer", 80, 1, 1000);
+        wallsClosingInTimer = builder.comment("Time that it takes for the walls of the pit (created by a command) to close fully").defineInRange("wallTimer", 15, 1, 1000);
         hostileLettersExplosionChance = builder.comment("Chance on each attack for a hostile letter to cause an explosion").defineInRange("hostileExplosionChance", 10.0, 0.0, 100.0);
         hostileLettersFireChargeChance = builder.comment("Chance on each attack for a hostile letter to shoot a fire charge").defineInRange("hostileFireChargeChance", 10.0, 0.0, 100.0);
         builder.pop();

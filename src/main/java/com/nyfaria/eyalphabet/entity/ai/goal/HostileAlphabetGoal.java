@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public class HostileAlphabetGoal extends MeleeAttackGoal {
 
@@ -24,11 +25,11 @@ public class HostileAlphabetGoal extends MeleeAttackGoal {
 
     @Override
     public boolean canUse() {
-        return this.mob.getShouldBeHostile() || !(this.mob instanceof F2Entity entity && entity.getShouldAttackI());
+        return this.mob.getShouldBeHostile() || (this.mob.getShouldBeHostile() && this.mob instanceof F2Entity entity && !entity.getShouldAttackI());
     }
 
     @Override
-    protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
+    protected void checkAndPerformAttack(@NotNull LivingEntity pEnemy, double pDistToEnemySqr) {
         if (this.mob.level instanceof ServerLevel level && pEnemy instanceof AlphabetEntity && pEnemy != this.mob) {
             RandomSource source = this.mob.getRandom();
             int explosionChance = (int) (double) EYAlphabetConfig.INSTANCE.hostileLettersExplosionChance.get();

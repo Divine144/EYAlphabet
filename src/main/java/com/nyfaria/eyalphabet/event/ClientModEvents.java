@@ -1,7 +1,7 @@
 package com.nyfaria.eyalphabet.event;
 
 import com.nyfaria.eyalphabet.EYAlphabet;
-import com.nyfaria.eyalphabet.entity.renderer.AlphabetEntityRenderer;
+/*import com.nyfaria.eyalphabet.entity.renderer.AlphabetEntityRenderer;*/
 import com.nyfaria.eyalphabet.init.EntityInit;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,6 +15,6 @@ public class ClientModEvents {
 
     @SubscribeEvent
     public static void init(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(EntityInit.ALPHABET_ENTITY.get(), AlphabetEntityRenderer::new);
+        /*event.registerEntityRenderer(EntityInit.ALPHABET_ENTITY.get(), AlphabetEntityRenderer::new);*/
     }
 }

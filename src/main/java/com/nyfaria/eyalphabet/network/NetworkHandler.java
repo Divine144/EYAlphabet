@@ -3,7 +3,9 @@ package com.nyfaria.eyalphabet.network;
 import com.google.common.collect.ImmutableList;
 import com.nyfaria.eyalphabet.EYAlphabet;
 import com.nyfaria.eyalphabet.cap.ExampleHolderAttacher;
+import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
 import dev._100media.capabilitysyncer.network.SimpleEntityCapabilityStatusPacket;
+import dev._100media.capabilitysyncer.network.SimpleLevelCapabilityStatusPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -24,6 +26,7 @@ public class NetworkHandler {
     public static void register() {
         List<BiConsumer<SimpleChannel, Integer>> packets = ImmutableList.<BiConsumer<SimpleChannel, Integer>>builder()
                 .add(SimpleEntityCapabilityStatusPacket::register)
+                .add(SimpleLevelCapabilityStatusPacket::register)
                 .build();
 
         packets.forEach(consumer -> consumer.accept(INSTANCE, getNextId()));

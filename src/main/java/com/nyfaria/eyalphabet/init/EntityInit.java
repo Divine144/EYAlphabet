@@ -23,7 +23,9 @@ import static com.nyfaria.eyalphabet.EYAlphabet.MODID;
 public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
 
+/*
     public static final RegistryObject<EntityType<AlphabetEntity>> ALPHABET_ENTITY = registerEntity("letter", () -> EntityType.Builder.of(AlphabetEntity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
+*/
 
     private static final List<AttributesRegister<?>> attributeSuppliers = new ArrayList<>();
 
