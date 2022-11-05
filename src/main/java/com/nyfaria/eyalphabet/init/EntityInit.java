@@ -1,6 +1,9 @@
 package com.nyfaria.eyalphabet.init;
 
 import com.nyfaria.eyalphabet.entity.AlphabetEntity;
+import com.nyfaria.eyalphabet.entity.E2Entity;
+import com.nyfaria.eyalphabet.entity.F2Entity;
+import com.nyfaria.eyalphabet.entity.H2Entity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,11 +24,12 @@ import static com.nyfaria.eyalphabet.EYAlphabet.MODID;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = MODID)
 public class EntityInit {
-    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
 
-/*
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     public static final RegistryObject<EntityType<AlphabetEntity>> ALPHABET_ENTITY = registerEntity("letter", () -> EntityType.Builder.of(AlphabetEntity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
-*/
+    public static final RegistryObject<EntityType<F2Entity>> SPECIAL_F = registerEntity("special_f", () -> EntityType.Builder.of(F2Entity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
+    public static final RegistryObject<EntityType<H2Entity>> SPECIAL_H = registerEntity("special_h", () -> EntityType.Builder.of(H2Entity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
+    public static final RegistryObject<EntityType<E2Entity>> SPECIAL_E = registerEntity("special_e", () -> EntityType.Builder.of(E2Entity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
 
     private static final List<AttributesRegister<?>> attributeSuppliers = new ArrayList<>();
 

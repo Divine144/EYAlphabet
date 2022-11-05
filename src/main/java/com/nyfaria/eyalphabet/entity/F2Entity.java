@@ -24,9 +24,10 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class F2Entity extends AlphabetEntity {
+public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
 
     private static final EntityDataAccessor<Boolean> SHOULD_ATTACK_I = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SHOULD_JUMPSCARE = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
 
     public F2Entity(EntityType<? extends F2Entity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -35,6 +36,7 @@ public class F2Entity extends AlphabetEntity {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(SHOULD_ATTACK_I, false);
+        this.entityData.define(SHOULD_JUMPSCARE, true);
     }
 
     @Override
@@ -50,17 +52,41 @@ public class F2Entity extends AlphabetEntity {
     }
 
     @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new FEatsIGoal(this));
-        this.goalSelector.addGoal(2, new HostileAlphabetGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F));
+    public void tick() {
+        super.tick();
+        if (this.tickCount >= 60) {
+            this.entityData.set(SHOULD_JUMPSCARE, false);
+        }
     }
 
-    public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.ATTACK_DAMAGE, 2F);
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !F2Entity.this.getShouldFreeze();
+            }
+        });
+        this.goalSelector.addGoal(1, new FEatsIGoal(this));
+        this.goalSelector.addGoal(2, new HostileAlphabetGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !F2Entity.this.getShouldFreeze();
+            }
+        });
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !F2Entity.this.getShouldFreeze();
+            }
+        });
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !F2Entity.this.getShouldFreeze();
+            }
+        });
     }
 
     @Override
@@ -81,9 +107,18 @@ public class F2Entity extends AlphabetEntity {
         this.entityData.set(SHOULD_ATTACK_I, shouldAttack);
     }
 
-    private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {
-        if (this.getShouldAttackI() && this.getTarget() != null) {
+    public boolean getShouldJumpscare() {
+        return this.entityData.get(SHOULD_JUMPSCARE);
+    }
 
+    @Override
+    public int getSpecialId() {
+        return -3;
+    }
+
+    private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {
+        if (this.getShouldAttackI() && this.getTarget() != null && !this.getShouldFreeze() || (this.getShouldJumpscare() && this.tickCount <= 60)) {
+            // Play open mouth animation
         }
         return PlayState.STOP;
     }

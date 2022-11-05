@@ -16,6 +16,7 @@ public class EYAlphabetConfig {
 
     public static final ForgeConfigSpec CONFIG_SPEC;
     public static final EYAlphabetConfig INSTANCE;
+
     static {
         Pair<EYAlphabetConfig, ForgeConfigSpec> pair = new ForgeConfigSpec.Builder().configure(EYAlphabetConfig::new);
         CONFIG_SPEC = pair.getRight();
@@ -30,12 +31,6 @@ public class EYAlphabetConfig {
     public final Function<Level, GlobalPos> h2AndE2blockPosition;
 
     private EYAlphabetConfig(ForgeConfigSpec.Builder builder) {
-        //                    GlobalPos redstonePos = EYBuildIRLConfig.INSTANCE.miningCompleteRedstoneSpawnPos.apply(player.level);
-        //                    if (redstonePos != null && player.level.getServer() != null) {
-        //                        ServerLevel otherDimLevel = player.level.getServer().getLevel(redstonePos.dimension());
-        //                        if (otherDimLevel != null)
-        //                            otherDimLevel.setBlockAndUpdate(redstonePos.pos(), Blocks.REDSTONE_BLOCK.defaultBlockState());
-        //                    }
         builder.push("EYAlphabet Config");
         h2AndE2blockPosition = createBlockPosEntry(builder, "H2 and E2 Block Position");
         allLettersAttackEachOtherRadius = builder.comment("Radius that all letters start attacking each other for").defineInRange("attackRadius", 30, 5, 1000);
@@ -102,5 +97,4 @@ public class EYAlphabetConfig {
             return null;
         }
     }
-
 }

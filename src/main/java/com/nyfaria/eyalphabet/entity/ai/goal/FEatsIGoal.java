@@ -41,7 +41,7 @@ public class FEatsIGoal extends TargetGoal {
         super.start();
         var entitiesList = Util.getEntitiesInRange(this.entity, AlphabetEntity.class, 3, 3, 3, p -> true);
         for (AlphabetEntity e : entitiesList) {
-            if (e.getLetterID() == 7) {
+            if (e.getLetterID() == 7) { // Change 7 to whatever id we want "I" to be
                 this.entity.setTarget(e);
                 break;
             }
@@ -50,6 +50,6 @@ public class FEatsIGoal extends TargetGoal {
 
     @Override
     public boolean canUse() {
-        return this.entity.getShouldAttackI();
+        return this.entity.getShouldAttackI() && !this.entity.getShouldFreeze();
     }
 }

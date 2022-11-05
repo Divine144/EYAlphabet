@@ -1,8 +1,11 @@
 package com.nyfaria.eyalphabet.entity;
 
+import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
 import com.nyfaria.eyalphabet.entity.ai.goal.HostileAlphabetGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.WalkToPairGoal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -17,7 +20,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class E2Entity extends AlphabetEntity {
+public class E2Entity extends AlphabetEntity implements ISpecialAlphabet {
 
     public E2Entity(EntityType<? extends E2Entity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -25,19 +28,28 @@ public class E2Entity extends AlphabetEntity {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new WalkToPairGoal(this, 1.0F, new BlockPos(0, 0, 0)));
+        this.goalSelector.addGoal(0, new FloatGoal(this) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !E2Entity.this.getShouldFreeze();
+            }
+        });
+        BlockPos pairPos = new BlockPos(0, 0, 0);
+        GlobalPos globalPos = EYAlphabetConfig.INSTANCE.h2AndE2blockPosition.apply(this.level);
+        if (globalPos != null && this.level.getServer() != null) {
+            ServerLevel otherDimLevel = this.level.getServer().getLevel(globalPos.dimension());
+            if (otherDimLevel != null) {
+                pairPos = globalPos.pos();
+            }
+        }
+        this.goalSelector.addGoal(1, new WalkToPairGoal(this, 1.0F, pairPos));
         this.goalSelector.addGoal(2, new HostileAlphabetGoal(this, 1.0D, false));
         this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.5F) {
             @Override
             public boolean canUse() {
-                return E2Entity.this.isInWaterOrBubble();
+                return E2Entity.this.isInWaterOrBubble() && !E2Entity.this.getShouldFreeze();
             }
         });
-    }
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.ATTACK_DAMAGE, 2F);
     }
 
     @Override
@@ -50,7 +62,12 @@ public class E2Entity extends AlphabetEntity {
         return factory;
     }
 
-    private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {
+    @Override
+    public int getSpecialId() {
+        return -2;
+    }
+
+    private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) { // Add animations
         return PlayState.STOP;
     }
 }

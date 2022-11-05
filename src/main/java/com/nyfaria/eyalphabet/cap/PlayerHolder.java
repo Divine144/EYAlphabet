@@ -84,7 +84,6 @@ public class PlayerHolder extends EntityCapability {
         nbt.putInt("timer", this.timer);
         nbt.putInt("timerStagger", this.timerStagger);
         nbt.putInt("queueSize", this.firstQueue.size());
-        System.out.println(firstQueue.size());
         return nbt;
     }
 
@@ -104,8 +103,6 @@ public class PlayerHolder extends EntityCapability {
         }
         this.timer = nbt.getInt("timer");
         this.timerStagger = nbt.getInt("timerStagger");
-        System.out.println(Arrays.toString(firstQueue.toArray()));
-        System.out.println(Arrays.toString(secondQueue.toArray()));
     }
 
     @Override

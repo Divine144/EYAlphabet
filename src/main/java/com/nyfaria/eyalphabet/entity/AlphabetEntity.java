@@ -30,6 +30,7 @@ public class AlphabetEntity extends Animal implements IAnimatable {
 
     private static final EntityDataAccessor<Integer> LETTER_ID = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SHOULD_BE_HOSTILE = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SHOULD_FREEZE = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.BOOLEAN);
 
     protected final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
@@ -39,8 +40,9 @@ public class AlphabetEntity extends Animal implements IAnimatable {
 
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(LETTER_ID, RandomSource.create().nextIntBetweenInclusive(0, 16));
+        this.entityData.define(LETTER_ID, (this instanceof ISpecialAlphabet alphabet) ? alphabet.getSpecialId() : RandomSource.create().nextIntBetweenInclusive(0, 16));
         this.entityData.define(SHOULD_BE_HOSTILE, false);
+        this.entityData.define(SHOULD_FREEZE, false);
     }
 
     @Override
@@ -57,17 +59,37 @@ public class AlphabetEntity extends Animal implements IAnimatable {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(0, new FloatGoal(this) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !AlphabetEntity.this.getShouldFreeze();
+            }
+        });
         this.goalSelector.addGoal(1, new HostileAlphabetGoal(this, 1.0D, false));
         this.goalSelector.addGoal(2, new PanicGoal(this, 2.0D) {
             @Override
             public boolean canUse() {
-                return super.canUse() && !AlphabetEntity.this.getShouldBeHostile();
+                return super.canUse() && !AlphabetEntity.this.getShouldBeHostile() && !AlphabetEntity.this.getShouldFreeze();
             }
         });
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !AlphabetEntity.this.getShouldFreeze();
+            }
+        });
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !AlphabetEntity.this.getShouldFreeze();
+            }
+        });
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !AlphabetEntity.this.getShouldFreeze();
+            }
+        });
     }
 
     @Nullable
@@ -100,6 +122,14 @@ public class AlphabetEntity extends Animal implements IAnimatable {
 
     public void setShouldBeHostile(boolean shouldBeHostile) {
         this.entityData.set(SHOULD_BE_HOSTILE, shouldBeHostile);
+    }
+
+    public boolean getShouldFreeze() {
+        return this.entityData.get(SHOULD_FREEZE);
+    }
+
+    public void setShouldFreeze(boolean shouldFreeze) {
+        this.entityData.set(SHOULD_FREEZE, shouldFreeze);
     }
 
     private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {

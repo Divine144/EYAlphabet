@@ -4,7 +4,7 @@ import com.nyfaria.eyalphabet.entity.AlphabetEntity;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-/*public class AlphabetEntityModel extends AnimatedGeoModel<AlphabetEntity> {
+public class AlphabetEntityModel extends AnimatedGeoModel<AlphabetEntity> {
 
     @Override
     public ResourceLocation getModelResource(AlphabetEntity object) {
@@ -20,4 +20,4 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
     public ResourceLocation getAnimationResource(AlphabetEntity animatable) {
         return null;
     }
-}*/
+}
