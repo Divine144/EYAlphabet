@@ -26,12 +26,13 @@ import static com.nyfaria.eyalphabet.EYAlphabet.MODID;
 public class EntityInit {
 
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
+    private static final List<AttributesRegister<?>> attributeSuppliers = new ArrayList<>();
+
     public static final RegistryObject<EntityType<AlphabetEntity>> ALPHABET_ENTITY = registerEntity("letter", () -> EntityType.Builder.of(AlphabetEntity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<F2Entity>> SPECIAL_F = registerEntity("special_f", () -> EntityType.Builder.of(F2Entity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<H2Entity>> SPECIAL_H = registerEntity("special_h", () -> EntityType.Builder.of(H2Entity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<E2Entity>> SPECIAL_E = registerEntity("special_e", () -> EntityType.Builder.of(E2Entity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
 
-    private static final List<AttributesRegister<?>> attributeSuppliers = new ArrayList<>();
 
     private static <T extends Entity> RegistryObject<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> supplier) {
         return ENTITIES.register(name, () -> supplier.get().build(MODID + ":" + name));

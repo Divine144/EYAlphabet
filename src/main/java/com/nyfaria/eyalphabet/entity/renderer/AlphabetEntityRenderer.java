@@ -11,6 +11,7 @@ public class AlphabetEntityRenderer extends GeoEntityRenderer<AlphabetEntity> {
 
     public AlphabetEntityRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new AlphabetEntityModel());
+        shadowRadius = 0.6f;
     }
 
     public @NotNull ResourceLocation getTextureLocation(@NotNull AlphabetEntity animate) {

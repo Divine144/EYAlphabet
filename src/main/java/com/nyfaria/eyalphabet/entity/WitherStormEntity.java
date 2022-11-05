@@ -16,14 +16,23 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class WitherStormEntity extends PathfinderMob {
+public class WitherStormEntity extends PathfinderMob implements IAnimatable {
 
     public static final String PLAYER_UUID_STRING = "c4eb26e9-a49b-4d7b-93c0-10d7b314bea6";
+
+    protected final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     private static final EntityDataAccessor<Optional<UUID>> TARGET_UUID = SynchedEntityData.defineId(WitherStormEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
@@ -84,5 +93,19 @@ public class WitherStormEntity extends PathfinderMob {
             this.entityData.set(TARGET_UUID, Optional.of(pCompound.getUUID("Target")));
         }
         super.readAdditionalSaveData(pCompound);
+    }
+
+    @Override
+    public void registerControllers(AnimationData data) {
+        data.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationEvent));
+    }
+
+    @Override
+    public AnimationFactory getFactory() {
+        return factory;
+    }
+
+    private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) { // Add animations
+        return PlayState.STOP;
     }
 }
