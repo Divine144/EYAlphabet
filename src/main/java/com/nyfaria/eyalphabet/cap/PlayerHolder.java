@@ -2,30 +2,32 @@ package com.nyfaria.eyalphabet.cap;
 
 import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
 import com.nyfaria.eyalphabet.network.NetworkHandler;
-import dev._100media.capabilitysyncer.core.GlobalLevelCapability;
+import dev._100media.capabilitysyncer.core.EntityCapability;
+import dev._100media.capabilitysyncer.network.EntityCapabilityStatusPacket;
 import dev._100media.capabilitysyncer.network.LevelCapabilityStatusPacket;
+import dev._100media.capabilitysyncer.network.SimpleEntityCapabilityStatusPacket;
 import dev._100media.capabilitysyncer.network.SimpleLevelCapabilityStatusPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class GlobalCapability extends GlobalLevelCapability {
+public class PlayerHolder extends EntityCapability {
 
     private final Queue<Map<BlockPos, BlockState>> firstQueue;
     private final Queue<Map<BlockPos, BlockState>> secondQueue;
     private int timer;
     private int timerStagger;
 
-    public GlobalCapability(Level level) {
-        super(level);
+    public PlayerHolder(Entity player) {
+        super(player);
         firstQueue = new ArrayDeque<>();
         secondQueue = new ArrayDeque<>();
         timer = EYAlphabetConfig.INSTANCE.wallsClosingInTimer.get() * 20;
@@ -55,7 +57,7 @@ public class GlobalCapability extends GlobalLevelCapability {
     @Override
     public CompoundTag serializeNBT(boolean savingToDisk) {
         CompoundTag nbt = new CompoundTag();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < this.firstQueue.size(); i++) {
             var polledItem = new ArrayDeque<>(firstQueue).poll();
             var polledItemTwo = new ArrayDeque<>(secondQueue).poll();
             if (polledItem != null) {
@@ -81,6 +83,8 @@ public class GlobalCapability extends GlobalLevelCapability {
         }
         nbt.putInt("timer", this.timer);
         nbt.putInt("timerStagger", this.timerStagger);
+        nbt.putInt("queueSize", this.firstQueue.size());
+        System.out.println(firstQueue.size());
         return nbt;
     }
 
@@ -88,7 +92,7 @@ public class GlobalCapability extends GlobalLevelCapability {
     public void deserializeNBT(CompoundTag nbt, boolean readingFromDisk) {
         this.firstQueue.clear();
         this.secondQueue.clear();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < nbt.getInt("queueSize"); i++) {
             var blockPosList = nbt.getList("blockPosList" + i, Tag.TAG_LIST);
             var blockStateList = nbt.getList("blockStateList" + i, Tag.TAG_LIST);
             if (!blockPosList.isEmpty()) {
@@ -100,11 +104,13 @@ public class GlobalCapability extends GlobalLevelCapability {
         }
         this.timer = nbt.getInt("timer");
         this.timerStagger = nbt.getInt("timerStagger");
+        System.out.println(Arrays.toString(firstQueue.toArray()));
+        System.out.println(Arrays.toString(secondQueue.toArray()));
     }
 
     @Override
-    public LevelCapabilityStatusPacket createUpdatePacket() {
-        return new SimpleLevelCapabilityStatusPacket(GlobalCapabilityAttacher.GLOBAL_LEVEL_CAPABILITY_RL, this);
+    public EntityCapabilityStatusPacket createUpdatePacket() {
+        return new SimpleEntityCapabilityStatusPacket(entity.getId(), PlayerHolderAttacher.PLAYER_RL, this);
     }
 
     @Override

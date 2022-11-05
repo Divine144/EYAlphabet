@@ -3,8 +3,8 @@ package com.nyfaria.eyalphabet.event;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.nyfaria.eyalphabet.EYAlphabet;
-import com.nyfaria.eyalphabet.cap.GlobalCapability;
-import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
+import com.nyfaria.eyalphabet.cap.PlayerHolder;
+import com.nyfaria.eyalphabet.cap.PlayerHolderAttacher;
 import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
 import com.nyfaria.eyalphabet.entity.AlphabetEntity;
 import com.nyfaria.eyalphabet.entity.F2Entity;
@@ -14,7 +14,6 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -23,7 +22,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,9 +57,9 @@ public class CommonForgeEvents {
                     .then(Commands.argument("relativePlayer", EntityArgument.player())
                             .executes(context -> {
                                 Player player = EntityArgument.getPlayer(context, "relativePlayer");
-                                var globalHolder = GlobalCapabilityAttacher.getGlobalLevelCapability(player.level);
-                                var globalHolderQueueOne = globalHolder.map(GlobalCapability::getFirstQueue).orElse(new ArrayDeque<>());
-                                var globalHolderQueueTwo = globalHolder.map(GlobalCapability::getSecondQueue).orElse(new ArrayDeque<>());
+                                var playerHolder = PlayerHolderAttacher.getPlayerHolder(player);
+                                var playerHolderQueueOne = playerHolder.map(PlayerHolder::getFirstQueue).orElse(new ArrayDeque<>());
+                                var playerHolderQueueTwo = playerHolder.map(PlayerHolder::getSecondQueue).orElse(new ArrayDeque<>());
 
                                 Map<BlockPos, BlockState> tempMap = new HashMap<>();
                                 BlockPos playerPosition = player.getOnPos().immutable();
@@ -75,7 +73,7 @@ public class CommonForgeEvents {
                                             player.level.setBlock(new BlockPos(x, y, z), Blocks.AIR.defaultBlockState(), 3);
                                         }
                                     }
-                                    globalHolderQueueOne.add(new HashMap<>(tempMap));
+                                    playerHolderQueueOne.add(new HashMap<>(tempMap));
                                     tempMap.clear();
                                 }
                                 for (int z = relativePosTwo.getZ(); z < playerPosition.getZ(); z++) {
@@ -85,7 +83,7 @@ public class CommonForgeEvents {
                                             player.level.setBlock(new BlockPos(x, y, z), Blocks.AIR.defaultBlockState(), 3);
                                         }
                                     }
-                                    globalHolderQueueTwo.add(new HashMap<>(tempMap));
+                                    playerHolderQueueTwo.add(new HashMap<>(tempMap));
                                     tempMap.clear();
                                 }
                                 return Command.SINGLE_SUCCESS;
@@ -95,28 +93,27 @@ public class CommonForgeEvents {
     }
 
     @SubscribeEvent
-    public static void onLevelTick(TickEvent.LevelTickEvent event) {
-        Level level = event.level;
-        if (!level.isClientSide && event.phase == TickEvent.Phase.END) {
-            var globalHolder = GlobalCapabilityAttacher.getGlobalLevelCapability(level);
-            if (globalHolder.filter(p -> p.getFirstQueue().size() != 0 && p.getSecondQueue().size() != 0).isPresent()) {
-                var globalHolderQueueOne = globalHolder.map(GlobalCapability::getFirstQueue).orElse(new ArrayDeque<>());
-                var globalHolderQueueTwo = globalHolder.map(GlobalCapability::getSecondQueue).orElse(new ArrayDeque<>());
-                int timer = globalHolder.map(GlobalCapability::getTimer).orElse(0);
-                int timerStagger = globalHolder.map(GlobalCapability::getTimerStagger).orElse(0);
-                if (timer != 0) globalHolder.ifPresent(p -> p.setTimer(p.getTimer() - 1)); // Start timer
-                if (timer % timerStagger == 0 && timer != 0) {
-                    var onePoll = globalHolderQueueOne.poll();
-                    var twoPoll = globalHolderQueueTwo.poll();
-                    if (onePoll != null && twoPoll != null) {
-                        onePoll.forEach(level::setBlockAndUpdate);
-                        twoPoll.forEach(level::setBlockAndUpdate);
+    public static void onLevelTick(TickEvent.PlayerTickEvent event) {
+        Player player = event.player;
+        if (player != null && !player.level.isClientSide && event.phase == TickEvent.Phase.END) {
+            var playerHolder = PlayerHolderAttacher.getPlayerHolder(player);
+            playerHolder.ifPresent(p -> {
+                if (p.getFirstQueue().size() != 0 && p.getSecondQueue().size() != 0) {
+                    var playerHolderOne = p.getFirstQueue();
+                    var playerHolderTwo = p.getSecondQueue();
+                    int timer = p.getTimer();
+                    if (timer != 0) p.setTimer(p.getTimer() - 1);
+                    if (timer % p.getTimerStagger() == 0 && timer != 0) {
+                        var onePoll = playerHolderOne.poll();
+                        var twoPoll = playerHolderTwo.poll();
+                        if (onePoll != null && twoPoll != null) {
+                            onePoll.forEach(player.level::setBlockAndUpdate);
+                            twoPoll.forEach(player.level::setBlockAndUpdate);
+                        }
                     }
+                    else if (timer == 0) p.setTimer(EYAlphabetConfig.INSTANCE.wallsClosingInTimer.get() * 20);
                 }
-                else if (timer == 0)  {
-                    globalHolder.ifPresent(p -> p.setTimer(EYAlphabetConfig.INSTANCE.wallsClosingInTimer.get() * 20)); // Reset timer when done
-                }
-            }
+            });
         }
     }
 }

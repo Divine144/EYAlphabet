@@ -2,8 +2,6 @@ package com.nyfaria.eyalphabet.network;
 
 import com.google.common.collect.ImmutableList;
 import com.nyfaria.eyalphabet.EYAlphabet;
-import com.nyfaria.eyalphabet.cap.ExampleHolderAttacher;
-import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
 import dev._100media.capabilitysyncer.network.SimpleEntityCapabilityStatusPacket;
 import dev._100media.capabilitysyncer.network.SimpleLevelCapabilityStatusPacket;
 import net.minecraft.resources.ResourceLocation;

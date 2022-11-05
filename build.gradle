@@ -141,6 +141,9 @@ dependencies {
     // 100 Media Abilities
     hundredMedia.addJarJarDep('dev._100media.hundredmediaabilities:hundredmediaabilities', hundredmediaabilities_version, hundredmediaabilities_version_range, 'fat','1.19')
 
+    // 100 Media Utility
+    hundredMedia.addJarJarDep('com.nyfaria.hmutility:hmutility', hmutility_version, hmutility_version_range, 'fat')
+
     // Suggestion Provider Fix
     runtimeOnly fg.deobf("curse.maven:suggestion-provider-fix-469647:${suggestion_provider_fix_file_id}")
 

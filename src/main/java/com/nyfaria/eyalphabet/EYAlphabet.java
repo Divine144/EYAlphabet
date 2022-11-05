@@ -1,10 +1,10 @@
 package com.nyfaria.eyalphabet;
 
-import com.nyfaria.eyalphabet.cap.ExampleHolderAttacher;
-import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
+import com.nyfaria.eyalphabet.cap.PlayerHolderAttacher;
 import com.nyfaria.eyalphabet.config.EYAlphabetClientConfig;
 import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
 import com.nyfaria.eyalphabet.datagen.*;
+import com.nyfaria.eyalphabet.init.AbilityInit;
 import com.nyfaria.eyalphabet.init.BlockInit;
 import com.nyfaria.eyalphabet.init.EntityInit;
 import com.nyfaria.eyalphabet.init.ItemInit;
@@ -37,7 +37,8 @@ public class EYAlphabet {
         EntityInit.ENTITIES.register(bus);
         BlockInit.BLOCKS.register(bus);
         BlockInit.BLOCK_ENTITIES.register(bus);
-        GlobalCapabilityAttacher.register();
+        AbilityInit.ABILITIES.register(bus);
+        PlayerHolderAttacher.register();
         GeckoLib.initialize();
     }
 

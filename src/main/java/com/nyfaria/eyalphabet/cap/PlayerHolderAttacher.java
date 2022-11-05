@@ -16,30 +16,30 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = EYAlphabet.MODID)
-public class ExampleHolderAttacher extends CapabilityAttacher {
+public class PlayerHolderAttacher extends CapabilityAttacher {
 
-    public static final Capability<ExampleHolder> EXAMPLE_CAPABILITY = getCapability(new CapabilityToken<>() {
 
+    public static final Capability<PlayerHolder> PLAYER_CAPABILITY = getCapability(new CapabilityToken<>() {
     });
-    public static final ResourceLocation EXAMPLE_RL = new ResourceLocation(EYAlphabet.MODID, "example");
-    private static final Class<ExampleHolder> CAPABILITY_CLASS = ExampleHolder.class;
+    public static final ResourceLocation PLAYER_RL = new ResourceLocation(EYAlphabet.MODID, "playercap");
+    private static final Class<PlayerHolder> CAPABILITY_CLASS = PlayerHolder.class;
 
-    public static LazyOptional<ExampleHolder> getExampleHolder(Entity player) {
-        return player.getCapability(EXAMPLE_CAPABILITY);
+    public static LazyOptional<PlayerHolder> getPlayerHolder(Entity player) {
+        return player.getCapability(PLAYER_CAPABILITY);
     }
 
-    public static ExampleHolder getExampleHolderUnwrap(Entity player) {
-        return getExampleHolder(player).orElse(null);
+    public static PlayerHolder getPlayerHolderUnwrap(Entity player) {
+        return getPlayerHolder(player).orElse(null);
     }
 
     private static void attach(AttachCapabilitiesEvent<Entity> event, Entity player) {
-        genericAttachCapability(event, new ExampleHolder(player), EXAMPLE_CAPABILITY, EXAMPLE_RL);
+        genericAttachCapability(event, new PlayerHolder(player), PLAYER_CAPABILITY, PLAYER_RL);
     }
 
     public static void register() {
         CapabilityAttacher.registerCapability(CAPABILITY_CLASS);
-        CapabilityAttacher.registerEntityAttacher(LivingEntity.class, ExampleHolderAttacher::attach, ExampleHolderAttacher::getExampleHolder);
-        SimpleEntityCapabilityStatusPacket.registerRetriever(EXAMPLE_RL, ExampleHolderAttacher::getExampleHolderUnwrap);
+        CapabilityAttacher.registerEntityAttacher(LivingEntity.class, PlayerHolderAttacher::attach, PlayerHolderAttacher::getPlayerHolder);
+        SimpleEntityCapabilityStatusPacket.registerRetriever(PLAYER_RL, PlayerHolderAttacher::getPlayerHolderUnwrap);
     }
 
     @SubscribeEvent
@@ -50,7 +50,7 @@ public class ExampleHolderAttacher extends CapabilityAttacher {
         // So we can copy capabilities
         oldPlayer.revive();
 
-        getExampleHolder(oldPlayer).ifPresent(oldAbilityHolder -> getExampleHolder(newPlayer)
+        getPlayerHolder(oldPlayer).ifPresent(oldAbilityHolder -> getPlayerHolder(newPlayer)
                 .ifPresent(newAbilityHolder -> newAbilityHolder.deserializeNBT(oldAbilityHolder.serializeNBT(false), false)));
     }
 }
