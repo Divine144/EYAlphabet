@@ -33,6 +33,6 @@ public class WalkToPairGoal extends MoveToBlockGoal {
 
     @Override
     public boolean canContinueToUse() {
-        return !this.isReachedTarget();
+        return this.canUse();
     }
 }

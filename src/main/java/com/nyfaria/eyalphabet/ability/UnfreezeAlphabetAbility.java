@@ -26,10 +26,11 @@ public class UnfreezeAlphabetAbility extends Ability {
         ItemStack item = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (item.is(ItemInit.ALPHABET_WAND.get())) {
             LivingEntity livingEntity = getTarget(player, 25);
-            if (livingEntity instanceof AlphabetEntity mob) {
-                mob.setShouldFreeze(false);
+            if (livingEntity instanceof AlphabetEntity) {
                 FreezeAlphabetAbility.ENTITY.remove(player);
-                AbilityHolderAttacher.getAbilityHolder(player).ifPresent(p -> p.removeActiveAbility(AbilityInit.FREEZE_ABILITY.get(), true));
+                AbilityHolderAttacher.getAbilityHolder(player)
+                        .filter(p -> p.isAbilityActive(AbilityInit.FREEZE_ABILITY.get()))
+                        .ifPresent(p -> p.removeActiveAbility(AbilityInit.FREEZE_ABILITY.get(), true));
             }
         }
     }

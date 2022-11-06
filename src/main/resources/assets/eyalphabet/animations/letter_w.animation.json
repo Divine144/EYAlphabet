@@ -1,0 +1,121 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"idle": {
+			"loop": true,
+			"animation_length": 1.5,
+			"bones": {
+				"bone3": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 0.9, 1]
+						},
+						"0.75": {
+							"vector": [1, 1, 1],
+							"easing": "easeInOutSine"
+						},
+						"1.5": {
+							"vector": [1, 0.9, 1],
+							"easing": "easeInOutCirc"
+						}
+					}
+				}
+			}
+		},
+		"walk": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"bone3": {
+					"rotation": {
+						"0.0": {
+							"vector": [-2.66399, 14.76689, -10.34527]
+						},
+						"0.5": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutQuart"
+						},
+						"1.0": {
+							"vector": [-3.04198, -19.75764, 7.97947],
+							"easing": "easeOutQuart"
+						},
+						"1.5": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutQuart"
+						},
+						"2.0": {
+							"vector": [-2.66399, 14.76689, -10.34527],
+							"easing": "easeOutQuart"
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 1, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutQuart"
+						},
+						"1.0": {
+							"vector": [0, 1, 0],
+							"easing": "easeOutQuart"
+						},
+						"1.5": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutQuart"
+						},
+						"2.0": {
+							"vector": [0, 1, 0],
+							"easing": "easeOutQuart"
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.5": {
+							"vector": [1, 0.9, 1],
+							"easing": "easeOutQuart"
+						},
+						"1.0": {
+							"vector": [1, 1, 1],
+							"easing": "easeOutQuart"
+						},
+						"1.5": {
+							"vector": [1, 0.9, 1],
+							"easing": "easeOutQuart"
+						},
+						"2.0": {
+							"vector": [1, 1, 1],
+							"easing": "easeOutQuart"
+						}
+					}
+				},
+				"bone": {
+					"position": {
+						"0.0": {
+							"vector": [0, 1, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutQuart"
+						},
+						"1.0": {
+							"vector": [0, 1, 0],
+							"easing": "easeOutQuart"
+						},
+						"1.5": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutQuart"
+						},
+						"2.0": {
+							"vector": [0, 1, 0],
+							"easing": "easeOutQuart"
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

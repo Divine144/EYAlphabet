@@ -7,9 +7,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -19,10 +16,9 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
 
@@ -42,19 +38,21 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
         this.entityData.set(SHOULD_ATTACK_I, nbt.getBoolean("shouldAttack"));
+        this.entityData.set(SHOULD_JUMPSCARE, nbt.getBoolean("shouldJumpscare"));
         super.readAdditionalSaveData(nbt);
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag nbt) {
         nbt.putBoolean("shouldAttack", this.entityData.get(SHOULD_ATTACK_I));
+        nbt.putBoolean("shouldJumpscare", this.entityData.get(SHOULD_JUMPSCARE));
         super.addAdditionalSaveData(nbt);
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (this.tickCount >= 60) {
+        if (this.tickCount >= 60) { // Checking if F just spawned
             this.entityData.set(SHOULD_JUMPSCARE, false);
         }
     }
@@ -74,11 +72,21 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
             public boolean canUse() {
                 return super.canUse() && !F2Entity.this.getShouldFreeze();
             }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && this.canUse();
+            }
         });
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !F2Entity.this.getShouldFreeze();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && this.canUse();
             }
         });
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F) {
@@ -86,17 +94,12 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
             public boolean canUse() {
                 return super.canUse() && !F2Entity.this.getShouldFreeze();
             }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && this.canUse();
+            }
         });
-    }
-
-    @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationEvent));
-    }
-
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
     }
 
     public boolean getShouldAttackI() {
@@ -112,14 +115,26 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
     }
 
     @Override
-    public int getSpecialId() {
-        return -3;
+    protected <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {
+        if (!this.getShouldFreeze()) {
+            if (this.getShouldAttackI() && this.getTarget() != null && !this.getShouldJumpscare()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("attack", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
+            }
+            else if (this.getShouldJumpscare()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("jumpscare", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
+            }
+            else if (event.isMoving()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("walk", ILoopType.EDefaultLoopTypes.LOOP));
+            }
+            else {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", ILoopType.EDefaultLoopTypes.LOOP));
+            }
+        }
+        return PlayState.CONTINUE;
     }
 
-    private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {
-        if (this.getShouldAttackI() && this.getTarget() != null && !this.getShouldFreeze() || (this.getShouldJumpscare() && this.tickCount <= 60)) {
-            // Play open mouth animation
-        }
-        return PlayState.STOP;
+    @Override
+    public int getSpecialID() {
+        return 4;
     }
 }

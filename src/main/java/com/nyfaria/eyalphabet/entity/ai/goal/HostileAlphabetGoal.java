@@ -28,7 +28,18 @@ public class HostileAlphabetGoal extends MeleeAttackGoal {
 
     @Override
     public boolean canUse() {
-        return (this.mob.getShouldBeHostile() || (this.mob.getShouldBeHostile() && this.mob instanceof F2Entity entity && !entity.getShouldAttackI())) && !this.mob.getShouldFreeze();
+        if (!this.mob.getShouldFreeze()) {
+            if (this.mob.getShouldBeHostile() && this.mob instanceof F2Entity entity && !entity.getShouldAttackI() && !entity.getShouldJumpscare()) {
+                return true;
+            }
+            else return this.mob.getShouldBeHostile();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canContinueToUse() {
+        return super.canContinueToUse() && this.canUse();
     }
 
     @Override
@@ -38,7 +49,7 @@ public class HostileAlphabetGoal extends MeleeAttackGoal {
             int explosionChance = (int) (double) EYAlphabetConfig.INSTANCE.hostileLettersExplosionChance.get();
             int fireChargeChance = (int) (double) EYAlphabetConfig.INSTANCE.hostileLettersFireChargeChance.get();
             double d0 = this.getAttackReachSqr(pEnemy);
-            if (pDistToEnemySqr <= d0 && this.getTicksUntilNextAttack() <= 0) {
+            if (pDistToEnemySqr <= d0 && this.getTicksUntilNextAttack() <= 0) { // Might need to do some adjustments here
                 if (source.nextIntBetweenInclusive(0, 100) == explosionChance) {
                     level.explode(mob, mob.getX(), mob.getY(), mob.getZ(), 4.0F, Explosion.BlockInteraction.BREAK);
                 }

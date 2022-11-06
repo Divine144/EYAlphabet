@@ -1,23 +1,30 @@
 package com.nyfaria.eyalphabet.entity;
 
-import com.nyfaria.eyalphabet.entity.ai.goal.FollowTargetGoal;
+import com.nyfaria.eyalphabet.cap.GlobalCapability;
+import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
+import com.nyfaria.eyalphabet.entity.ai.goal.StormFollowTargetGoal;
+import com.nyfaria.eyalphabet.entity.ai.goal.StormSetTargetGoal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomFlyingGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -41,15 +48,15 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.set(TARGET_UUID, Optional.empty());
+        this.entityData.define(TARGET_UUID, Optional.empty());
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new FollowTargetGoal(this, false));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 15.0F));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomFlyingGoal(this, 1.0D));
+        this.goalSelector.addGoal(0, new StormSetTargetGoal(this, false));
+        this.goalSelector.addGoal(1, new StormFollowTargetGoal(this, false));
+        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 30.0F));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomFlyingGoal(this, 0.5D));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
     }
 
@@ -81,6 +88,10 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
         return flyingpathnavigation;
     }
 
+    public static AttributeSupplier.Builder createAttributes() {
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 300.0D).add(Attributes.MOVEMENT_SPEED, 0.6F).add(Attributes.FLYING_SPEED, 0.6F).add(Attributes.FOLLOW_RANGE, 40.0D).add(Attributes.ARMOR, 4.0D);
+    }
+
     @Override
     public void addAdditionalSaveData(CompoundTag pCompound) {
         if (this.getTargetUUID() != null) {
@@ -107,7 +118,8 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
         return factory;
     }
 
-    private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) { // Add animations
-        return PlayState.STOP;
+    private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("Move", ILoopType.EDefaultLoopTypes.LOOP));
+        return PlayState.CONTINUE;
     }
 }

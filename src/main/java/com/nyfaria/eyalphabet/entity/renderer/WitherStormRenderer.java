@@ -1,5 +1,6 @@
 package com.nyfaria.eyalphabet.entity.renderer;
 
+import com.nyfaria.eyalphabet.EYAlphabet;
 import com.nyfaria.eyalphabet.entity.WitherStormEntity;
 import com.nyfaria.eyalphabet.entity.model.WitherStormModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -15,6 +16,6 @@ public class WitherStormRenderer extends GeoEntityRenderer<WitherStormEntity> {
     }
 
     public @NotNull ResourceLocation getTextureLocation(@NotNull WitherStormEntity animate) {
-        return null;
+        return new ResourceLocation(EYAlphabet.MODID, "textures/entity/wither_storm.png");
     }
 }

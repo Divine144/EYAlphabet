@@ -10,12 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.level.Level;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class H2Entity extends AlphabetEntity implements ISpecialAlphabet {
 
@@ -46,25 +40,16 @@ public class H2Entity extends AlphabetEntity implements ISpecialAlphabet {
             public boolean canUse() {
                 return H2Entity.this.isInWaterOrBubble() && !H2Entity.this.getShouldFreeze();
             }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && !H2Entity.this.getShouldFreeze();
+            }
         });
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationEvent));
-    }
-
-    @Override
-    public AnimationFactory getFactory() {
-        return factory;
-    }
-
-    @Override
-    public int getSpecialId() {
-        return -1;
-    }
-
-    private <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) { // Add animations
-        return PlayState.STOP;
+    public int getSpecialID() {
+        return 6;
     }
 }

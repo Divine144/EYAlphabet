@@ -17,39 +17,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Util {
-    /**
-     * Raytrace the player look vector to return what entity is looked at. Returns null if not found
-     */
-    public static Entity rayTrace(Level world, Player player, double range) {
-        Vec3 pos = player.position();
-        Vec3 cam1 = player.getLookAngle();
-        Vec3 cam2 = cam1.add(cam1.x * range, cam1.y * range, cam1.z * range);
-        AABB aabb = player.getBoundingBox().expandTowards(cam1.scale(range)).inflate(1.0F, 1.0F, 1.0F);
-        EntityHitResult ray = findEntity(world, player, pos, cam2, aabb, range);
-        if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
-            return ray.getEntity() instanceof LivingEntity && !(ray.getEntity() instanceof Player) ? ray.getEntity() : null;
-        }
-        return null;
-    }
-
-    public static Direction findHorizontalDirection(BlockPos pos, Vec3 vector) {
-        Vec3 center = Vec3.atCenterOf(pos);
-        Vec3 direction = vector.subtract(center);
-        boolean eastWest = (Math.abs(direction.x()) > Math.abs(direction.z()));
-        if (eastWest) {
-            if (direction.x >= 0) {
-                return Direction.EAST;
-            } else {
-                return Direction.WEST;
-            }
-        } else {
-            if (direction.z >= 0) {
-                return Direction.SOUTH;
-            } else {
-                return Direction.NORTH;
-            }
-        }
-    }
 
     /**
      * Returns a list of entities (targets) from a relative entity within the specified x, y, and z bounds.
@@ -68,64 +35,13 @@ public class Util {
         return Comparator.comparing(entity -> entity.distanceToSqr(other.getX(), other.getY(), other.getZ()));
     }
 
-    /**
-     * Raytrace the player look vector to return EntityRayTraceResult
-     */
-    private static EntityHitResult findEntity(Level world, Player player, Vec3 pos, Vec3 look, AABB aabb, double range) {
-        for (Entity entity1 : world.getEntities(player, aabb)) {
-            AABB mob = entity1.getBoundingBox().inflate(1.0F);
-            if (intersect(pos, look, mob, range)) {
-                return new EntityHitResult(entity1);
-            }
-        }
-        return null;
-    }
-
-    private static boolean intersect(Vec3 pos, Vec3 look, AABB mob, double range) {
-        Vec3 invDir = new Vec3(1f / look.x, 1f / look.y, 1f / look.z);
-
-        boolean signDirX = invDir.x < 0;
-        boolean signDirY = invDir.y < 0;
-        boolean signDirZ = invDir.z < 0;
-
-        Vec3 max = new Vec3(mob.maxX, mob.maxY, mob.maxZ);
-        Vec3 min = new Vec3(mob.minX, mob.minY, mob.minZ);
-
-        Vec3 bBox = signDirX ? max : min;
-        double tMin = (bBox.x - pos.x) * invDir.x;
-        bBox = signDirX ? min : max;
-        double tMax = (bBox.x - pos.x) * invDir.x;
-        bBox = signDirY ? max : min;
-        double tYMin = (bBox.y - pos.y) * invDir.y;
-        bBox = signDirY ? min : max;
-        double tYMax = (bBox.y - pos.y) * invDir.y;
-
-        if ((tMin > tYMax) || (tYMin > tMax)) {
-            return false;
-        }
-
-        if (tYMin > tMin) {
-            tMin = tYMin;
-        }
-
-        if (tYMax < tMax) {
-            tMax = tYMax;
-        }
-
-        bBox = signDirZ ? max : min;
-        double tZMin = (bBox.z - pos.z) * invDir.z;
-        bBox = signDirZ ? min : max;
-        double tZMax = (bBox.z - pos.z) * invDir.z;
-
-        if ((tMin > tZMax) || (tZMin > tMax)) {
-            return false;
-        }
-        if (tZMin > tMin) {
-            tMin = tZMin;
-        }
-        if (tZMax < tMax) {
-            tMax = tZMax;
-        }
-        return (tMin < range) && (tMax > 0);
+    public static String getLetterFromID(int id) {
+        return switch (id) {
+            case 1 -> "a"; case 2 -> "c"; case 3 -> "e"; case 4 -> "f";
+            case 5 -> "g"; case 6 -> "h"; case 7 -> "m"; case 8 -> "n";
+            case 9 -> "o"; case 10 -> "p"; case 11 -> "r"; case 12 -> "s";
+            case 13 -> "t"; case 14 -> "u"; case 15 -> "w"; case 16 -> "i";
+            default -> "y";
+        };
     }
 }

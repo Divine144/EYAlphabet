@@ -1,9 +1,6 @@
 package com.nyfaria.eyalphabet.init;
 
-import com.nyfaria.eyalphabet.entity.AlphabetEntity;
-import com.nyfaria.eyalphabet.entity.E2Entity;
-import com.nyfaria.eyalphabet.entity.F2Entity;
-import com.nyfaria.eyalphabet.entity.H2Entity;
+import com.nyfaria.eyalphabet.entity.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,7 +29,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<F2Entity>> SPECIAL_F = registerEntity("special_f", () -> EntityType.Builder.of(F2Entity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<H2Entity>> SPECIAL_H = registerEntity("special_h", () -> EntityType.Builder.of(H2Entity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<E2Entity>> SPECIAL_E = registerEntity("special_e", () -> EntityType.Builder.of(E2Entity::new, MobCategory.CREATURE), AlphabetEntity::createAttributes);
-
+    public static final RegistryObject<EntityType<WitherStormEntity>> WITHER_STORM_ENTITY = registerEntity("wither_storm", () -> EntityType.Builder.of(WitherStormEntity::new, MobCategory.MONSTER).sized(3.0f, 3.0f), WitherStormEntity::createAttributes);
 
     private static <T extends Entity> RegistryObject<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> supplier) {
         return ENTITIES.register(name, () -> supplier.get().build(MODID + ":" + name));
