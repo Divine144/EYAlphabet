@@ -1,14 +1,10 @@
 package com.nyfaria.eyalphabet.entity.ai.goal;
 
 import com.nyfaria.eyalphabet.entity.AlphabetEntity;
-import com.nyfaria.eyalphabet.util.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
 public class WalkToPairGoal extends MoveToBlockGoal {
 
@@ -31,20 +27,12 @@ public class WalkToPairGoal extends MoveToBlockGoal {
     }
 
     @Override
-    protected void moveMobToBlock() {
-        BlockPos target = getMoveToTarget();
-        this.entity.getNavigation().moveTo(target.getX() + 0.5, target.getY(), target.getZ() + 0.5, speedModifier);
-        this.entity.getLookControl().setLookAt(Vec3.atCenterOf(target));
-    }
-
-    @Override
-    protected @NotNull BlockPos getMoveToTarget() {
-        Direction direction = Util.findHorizontalDirection(blockPos, this.entity.position());
-        return blockPos.relative(direction);
-    }
-
-    @Override
     public boolean canUse() {
         return !this.isReachedTarget() && !this.entity.isInWaterOrBubble() && !this.entity.getShouldBeHostile() && !this.entity.getShouldFreeze();
+    }
+
+    @Override
+    public boolean canContinueToUse() {
+        return !this.isReachedTarget();
     }
 }
