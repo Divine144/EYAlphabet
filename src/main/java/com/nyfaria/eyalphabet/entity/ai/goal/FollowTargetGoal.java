@@ -1,5 +1,7 @@
 package com.nyfaria.eyalphabet.entity.ai.goal;
 
+import com.nyfaria.eyalphabet.cap.GlobalCapability;
+import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
 import com.nyfaria.eyalphabet.entity.WitherStormEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
@@ -19,6 +21,7 @@ public class FollowTargetGoal extends TargetGoal {
     @Override
     public void tick() {
         super.tick();
+        this.entity.setTargetUUID(GlobalCapabilityAttacher.getGlobalLevelCapability(this.entity.level).map(GlobalCapability::getFireLightUUID).orElse(null));
         Player target = this.entity.getTarget();
         if (target != null) {
             this.mob.setTarget(target);
@@ -33,6 +36,6 @@ public class FollowTargetGoal extends TargetGoal {
 
     @Override
     public boolean canUse() {
-        return this.entity.getTarget() != null;
+        return true;
     }
 }

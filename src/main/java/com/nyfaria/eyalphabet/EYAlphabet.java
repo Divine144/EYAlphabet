@@ -1,5 +1,6 @@
 package com.nyfaria.eyalphabet;
 
+import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
 import com.nyfaria.eyalphabet.cap.PlayerHolderAttacher;
 import com.nyfaria.eyalphabet.config.EYAlphabetClientConfig;
 import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
@@ -39,6 +40,7 @@ public class EYAlphabet {
         BlockInit.BLOCK_ENTITIES.register(bus);
         AbilityInit.ABILITIES.register(bus);
         PlayerHolderAttacher.register();
+        GlobalCapabilityAttacher.register();
         GeckoLib.initialize();
     }
 

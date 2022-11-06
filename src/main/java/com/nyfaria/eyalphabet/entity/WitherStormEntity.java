@@ -30,8 +30,6 @@ import java.util.UUID;
 
 public class WitherStormEntity extends PathfinderMob implements IAnimatable {
 
-    public static final String PLAYER_UUID_STRING = "c4eb26e9-a49b-4d7b-93c0-10d7b314bea6";
-
     protected final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     private static final EntityDataAccessor<Optional<UUID>> TARGET_UUID = SynchedEntityData.defineId(WitherStormEntity.class, EntityDataSerializers.OPTIONAL_UUID);
@@ -43,7 +41,7 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.set(TARGET_UUID, Optional.of(UUID.fromString(PLAYER_UUID_STRING)));
+        this.entityData.set(TARGET_UUID, Optional.empty());
     }
 
     @Override
@@ -68,6 +66,10 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
     @Nullable
     public UUID getTargetUUID() {
         return this.entityData.get(TARGET_UUID).orElse(null);
+    }
+
+    public void setTargetUUID(UUID newUUID) {
+        this.entityData.set(TARGET_UUID, Optional.of(newUUID));
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.nyfaria.eyalphabet.event;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.nyfaria.eyalphabet.EYAlphabet;
+import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
 import com.nyfaria.eyalphabet.cap.PlayerHolder;
 import com.nyfaria.eyalphabet.cap.PlayerHolderAttacher;
 import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
@@ -89,6 +90,15 @@ public class CommonForgeEvents {
                                 return Command.SINGLE_SUCCESS;
                             })
                     ))
+        );
+        dispatcher.register(Commands.literal("firelight")
+                .then(Commands.argument("playerWhoIsFirelight", EntityArgument.player())
+                        .executes(context -> {
+                            Player player = EntityArgument.getPlayer(context, "playerWhoIsFirelight");
+                            GlobalCapabilityAttacher.getGlobalLevelCapability(player.level).ifPresent(p -> p.setFireLightUUID(player.getUUID()));
+                            return Command.SINGLE_SUCCESS;
+                        })
+                )
         );
     }
 
