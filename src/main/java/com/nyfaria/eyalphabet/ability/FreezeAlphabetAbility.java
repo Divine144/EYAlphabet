@@ -49,6 +49,7 @@ public class FreezeAlphabetAbility extends Ability {
                     HELD_ENTITIES.put(player.getUUID(), livingEntity.getId());
                     DISTANCE.put(livingEntity.getId(), player.getEyePosition().distanceTo(livingEntity.getEyePosition()));
                     mob.setShouldFreeze(true);
+                    mob.setNoGravity(true);
                 }
             }
         }
