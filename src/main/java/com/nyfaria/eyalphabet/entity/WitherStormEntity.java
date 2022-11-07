@@ -9,14 +9,15 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomFlyingGoal;
+import net.minecraft.world.entity.ai.behavior.FollowTemptation;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -53,11 +54,8 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new StormSetTargetGoal(this, false));
-        this.goalSelector.addGoal(1, new StormFollowTargetGoal(this, false));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 30.0F));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomFlyingGoal(this, 0.5D));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new StormFollowTargetGoal(this, 1F, 3.0F,15F));
+        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
     }
 
     @Nullable
@@ -65,7 +63,8 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
         try {
             UUID uuid = this.getTargetUUID();
             return uuid == null ? null : this.level.getPlayerByUUID(uuid);
-        } catch (IllegalArgumentException illegalargumentexception) {
+        }
+        catch (IllegalArgumentException illegalargumentexception) {
             return null;
         }
     }

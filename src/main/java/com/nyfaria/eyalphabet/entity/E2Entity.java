@@ -1,8 +1,9 @@
 package com.nyfaria.eyalphabet.entity;
 
 import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
+import com.nyfaria.eyalphabet.entity.ai.goal.AlphabetSetTargetGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.HostileAlphabetGoal;
-import com.nyfaria.eyalphabet.entity.ai.goal.WalkToPairGoal;
+import com.nyfaria.eyalphabet.entity.ai.goal.WalkToBlockGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
@@ -33,12 +34,13 @@ public class E2Entity extends AlphabetEntity implements ISpecialAlphabet {
                 pairPos = globalPos.pos();
             }
         }
-        this.goalSelector.addGoal(1, new WalkToPairGoal(this, 1.0F, pairPos));
-        this.goalSelector.addGoal(2, new HostileAlphabetGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.5F) {
+        this.goalSelector.addGoal(1, new WalkToBlockGoal(this, 1.0F, pairPos.offset(-1, 0, 0)));
+        this.goalSelector.addGoal(2, new AlphabetSetTargetGoal(this, false));
+        this.goalSelector.addGoal(3, new HostileAlphabetGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D, 0.5F) {
             @Override
             public boolean canUse() {
-                return E2Entity.this.isInWaterOrBubble() && !E2Entity.this.getShouldFreeze();
+                return super.canUse() && E2Entity.this.isInWaterOrBubble() && !E2Entity.this.getShouldFreeze() && !E2Entity.this.getShouldBeHostile();
             }
 
             @Override

@@ -7,18 +7,22 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class WitherStormModel extends AnimatedGeoModel<WitherStormEntity> {
 
+    private final ResourceLocation model = new ResourceLocation(EYAlphabet.MODID, "geo/wither_storm.geo.json");
+    private final ResourceLocation texture = new ResourceLocation(EYAlphabet.MODID, "textures/entity/wither_storm.png");
+    private final ResourceLocation animation = new ResourceLocation(EYAlphabet.MODID, "animations/wither_storm.animation.json");
+
     @Override
     public ResourceLocation getModelResource(WitherStormEntity object) {
-        return new ResourceLocation(EYAlphabet.MODID, "geo/wither_storm.geo.json");
+        return model;
     }
 
     @Override
     public ResourceLocation getTextureResource(WitherStormEntity object) {
-        return new ResourceLocation(EYAlphabet.MODID, "textures/entity/wither_storm.png");
+        return texture;
     }
 
     @Override
     public ResourceLocation getAnimationResource(WitherStormEntity animatable) {
-        return new ResourceLocation(EYAlphabet.MODID, "animations/wither_storm.animation.json");
+        return animation;
     }
 }

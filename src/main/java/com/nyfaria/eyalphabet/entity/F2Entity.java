@@ -1,5 +1,6 @@
 package com.nyfaria.eyalphabet.entity;
 
+import com.nyfaria.eyalphabet.entity.ai.goal.AlphabetSetTargetGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.FEatsIGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.HostileAlphabetGoal;
 import net.minecraft.nbt.CompoundTag;
@@ -66,8 +67,30 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
             }
         });
         this.goalSelector.addGoal(1, new FEatsIGoal(this));
-        this.goalSelector.addGoal(2, new HostileAlphabetGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+        this.goalSelector.addGoal(2, new AlphabetSetTargetGoal(this, false) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !F2Entity.this.getShouldAttackI() && !F2Entity.this.getShouldJumpscare();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && this.canUse();
+            }
+        });
+        this.goalSelector.addGoal(3, new HostileAlphabetGoal(this, 1.0D, false));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !F2Entity.this.getShouldFreeze() && !F2Entity.this.getShouldBeHostile();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && this.canUse();
+            }
+        });
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !F2Entity.this.getShouldFreeze();
@@ -78,18 +101,7 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
                 return super.canContinueToUse() && this.canUse();
             }
         });
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this) {
-            @Override
-            public boolean canUse() {
-                return super.canUse() && !F2Entity.this.getShouldFreeze();
-            }
-
-            @Override
-            public boolean canContinueToUse() {
-                return super.canContinueToUse() && this.canUse();
-            }
-        });
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F) {
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !F2Entity.this.getShouldFreeze();

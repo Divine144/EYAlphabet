@@ -1,24 +1,25 @@
 package com.nyfaria.eyalphabet.entity;
 
+import com.nyfaria.eyalphabet.EYAlphabet;
+import com.nyfaria.eyalphabet.entity.ai.goal.AlphabetSetTargetGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.HostileAlphabetGoal;
+import com.nyfaria.eyalphabet.util.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -29,11 +30,17 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
+import java.util.Random;
+
 public class AlphabetEntity extends PathfinderMob implements IAnimatable {
 
     private static final EntityDataAccessor<Integer> LETTER_ID = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SHOULD_BE_HOSTILE = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SHOULD_FREEZE = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private ResourceLocation modelLocation;
+    private ResourceLocation textureLocation;
+    private ResourceLocation animationLocation;
 
     protected final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
@@ -43,9 +50,11 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
 
     protected void defineSynchedData() {
         super.defineSynchedData();
-        int y = this.random.nextIntBetweenInclusive(0, 16);
-        System.out.println(y);
-        this.entityData.define(LETTER_ID, this instanceof ISpecialAlphabet special ? special.getSpecialID() : y);
+        this.entityData.define(LETTER_ID, this instanceof ISpecialAlphabet special ? special.getSpecialID() : RandomSource.create().nextIntBetweenInclusive(0, 16));
+        String identifier = Util.getLetterFromID(this.getLetterID());
+        this.modelLocation = new ResourceLocation(EYAlphabet.MODID, "geo/letter_" + identifier + ".geo.json");
+        this.textureLocation = new ResourceLocation(EYAlphabet.MODID, "textures/entity/letter_" + identifier + ".png");
+        this.animationLocation = new ResourceLocation(EYAlphabet.MODID, "animations/letter_" + identifier + ".animation.json");
         this.entityData.define(SHOULD_BE_HOSTILE, false);
         this.entityData.define(SHOULD_FREEZE, false);
     }
@@ -60,7 +69,7 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag nbt) {
-        nbt.putInt("Letter", this.entityData.get(LETTER_ID));
+        nbt.putInt("Letter", this.getLetterID());
         nbt.putBoolean("Hostile", this.entityData.get(SHOULD_BE_HOSTILE));
         nbt.putBoolean("Freeze", this.entityData.get(SHOULD_FREEZE));
         super.addAdditionalSaveData(nbt);
@@ -74,8 +83,10 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
                 return super.canUse() && !AlphabetEntity.this.getShouldFreeze();
             }
         });
-        this.goalSelector.addGoal(1, new HostileAlphabetGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(2, new PanicGoal(this, 2.0D) {
+        this.goalSelector.addGoal(1, new AlphabetSetTargetGoal(this, false));
+        this.goalSelector.addGoal(2, new HostileAlphabetGoal(this, 1.0D, false));
+
+        this.goalSelector.addGoal(3, new PanicGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !AlphabetEntity.this.getShouldBeHostile() && !AlphabetEntity.this.getShouldFreeze();
@@ -86,7 +97,18 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
                 return super.canContinueToUse() && this.canUse();
             }
         });
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+            @Override
+            public boolean canUse() {
+                return super.canUse() && !AlphabetEntity.this.getShouldFreeze() && !AlphabetEntity.this.getShouldBeHostile();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return super.canContinueToUse() && this.canUse();
+            }
+        });
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 6.0F) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !AlphabetEntity.this.getShouldFreeze();
@@ -97,18 +119,7 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
                 return super.canContinueToUse() && this.canUse();
             }
         });
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F) {
-            @Override
-            public boolean canUse() {
-                return super.canUse() && !AlphabetEntity.this.getShouldFreeze();
-            }
-
-            @Override
-            public boolean canContinueToUse() {
-                return super.canContinueToUse() && this.canUse();
-            }
-        });
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this) {
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
                 return super.canUse() && !AlphabetEntity.this.getShouldFreeze();
@@ -165,5 +176,17 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
             }
         }
         return PlayState.CONTINUE;
+    }
+
+    public ResourceLocation getModelLocation() {
+        return modelLocation;
+    }
+
+    public ResourceLocation getTextureLocation() {
+        return textureLocation;
+    }
+
+    public ResourceLocation getAnimationLocation() {
+        return animationLocation;
     }
 }

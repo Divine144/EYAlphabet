@@ -32,7 +32,7 @@ public class HostileAlphabetGoal extends MeleeAttackGoal {
             if (this.mob.getShouldBeHostile() && this.mob instanceof F2Entity entity && !entity.getShouldAttackI() && !entity.getShouldJumpscare()) {
                 return true;
             }
-            else return this.mob.getShouldBeHostile();
+            return this.mob.getShouldBeHostile();
         }
         return false;
     }
@@ -49,17 +49,17 @@ public class HostileAlphabetGoal extends MeleeAttackGoal {
             int explosionChance = (int) (double) EYAlphabetConfig.INSTANCE.hostileLettersExplosionChance.get();
             int fireChargeChance = (int) (double) EYAlphabetConfig.INSTANCE.hostileLettersFireChargeChance.get();
             double d0 = this.getAttackReachSqr(pEnemy);
-            if (pDistToEnemySqr <= d0 && this.getTicksUntilNextAttack() <= 0) { // Might need to do some adjustments here
-                if (source.nextIntBetweenInclusive(0, 100) == explosionChance) {
+            if (pDistToEnemySqr <= d0 && this.getTicksUntilNextAttack() <= 0) {
+                if (source.nextIntBetweenInclusive(0, 100) <= explosionChance) {
                     level.explode(mob, mob.getX(), mob.getY(), mob.getZ(), 4.0F, Explosion.BlockInteraction.BREAK);
                 }
-                else if (source.nextIntBetweenInclusive(0, 100) == fireChargeChance) {
+                else if (source.nextIntBetweenInclusive(0, 100) <= fireChargeChance) {
                     Vec3 vec3 = this.mob.getViewVector(1.0F);
                     double d2 = this.mob.getX() - (this.mob.getX() + vec3.x * 2.0D);
                     double d3 = this.mob.getY(0.5D) - (0.5D + this.mob.getY());
                     double d4 = this.mob.getZ() - (this.mob.getZ() + vec3.z * 2.0D);
                     LargeFireball largefireball = new LargeFireball(level, this.mob, d2, d3, d4, 1);
-                    largefireball.setPos(this.mob.getX() + vec3.x * 2.0D, this.mob.getY() + 0.5D, largefireball.getZ() + vec3.z * 2.0D);
+                    largefireball.setPos(this.mob.getX() + vec3.x, this.mob.getY(), largefireball.getZ() + vec3.z);
                     level.addFreshEntity(largefireball);
                 }
                 else {
