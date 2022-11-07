@@ -1,5 +1,6 @@
 package com.nyfaria.eyalphabet.entity;
 
+import com.nyfaria.eyalphabet.entity.ai.goal.StormFollowGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.StormFollowTargetGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.FirelightTargetGoal;
 import net.minecraft.world.damagesource.DamageSource;
@@ -9,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomFlyingGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
@@ -35,9 +37,9 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
 
     @Override
     protected void registerGoals() {
-        this.targetSelector.addGoal(0, new FirelightTargetGoal(this));
-        this.goalSelector.addGoal(1, new StormFollowTargetGoal(this, 1F, 3.0F, 15F));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(1, new StormFollowGoal(this, 1.0D, 15.0F, 5.0F, true));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomFlyingGoal(this, 1.0D));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
     }
 
     @Override
