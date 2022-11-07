@@ -22,40 +22,37 @@ import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 
 public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
-
     private static final EntityDataAccessor<Boolean> SHOULD_ATTACK_I = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> SHOULD_JUMPSCARE = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
 
-    public F2Entity(EntityType<? extends F2Entity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public F2Entity(EntityType<? extends F2Entity> entityType, Level level) {
+        super(entityType, level);
     }
 
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(SHOULD_ATTACK_I, false);
-        this.entityData.define(SHOULD_JUMPSCARE, true);
+        this.entityData.define(ATTACKING, false);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
         this.entityData.set(SHOULD_ATTACK_I, nbt.getBoolean("shouldAttack"));
-        this.entityData.set(SHOULD_JUMPSCARE, nbt.getBoolean("shouldJumpscare"));
         super.readAdditionalSaveData(nbt);
     }
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag nbt) {
         nbt.putBoolean("shouldAttack", this.entityData.get(SHOULD_ATTACK_I));
-        nbt.putBoolean("shouldJumpscare", this.entityData.get(SHOULD_JUMPSCARE));
         super.addAdditionalSaveData(nbt);
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-        if (this.tickCount >= 60) { // Checking if F just spawned
-            this.entityData.set(SHOULD_JUMPSCARE, false);
-        }
+    public void setAttacking(boolean attacking) {
+        this.entityData.set(ATTACKING, attacking);
+    }
+
+    public boolean isAttacking() {
+        return this.entityData.get(ATTACKING);
     }
 
     @Override
@@ -70,7 +67,7 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
         this.goalSelector.addGoal(2, new AlphabetSetTargetGoal(this, false) {
             @Override
             public boolean canUse() {
-                return super.canUse() && !F2Entity.this.getShouldAttackI() && !F2Entity.this.getShouldJumpscare();
+                return super.canUse() && !F2Entity.this.getShouldAttackI();
             }
 
             @Override
@@ -122,23 +119,18 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
         this.entityData.set(SHOULD_ATTACK_I, shouldAttack);
     }
 
-    public boolean getShouldJumpscare() {
-        return this.entityData.get(SHOULD_JUMPSCARE);
-    }
-
     @Override
     protected <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {
         if (!this.getShouldFreeze()) {
-            if (this.getShouldAttackI() && this.getTarget() != null && !this.getShouldJumpscare()) {
+            if (this.getShouldAttackI() && this.isAttacking()) {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("attack", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
             }
-            else if (this.getShouldJumpscare()) {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("jumpscare", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
-            }
+            // else if (this.getShouldJumpscare()) {
+            //     event.getController().setAnimation(new AnimationBuilder().addAnimation("jumpscare", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
+            // }
             else if (event.isMoving()) {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("walk", ILoopType.EDefaultLoopTypes.LOOP));
-            }
-            else {
+            } else {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", ILoopType.EDefaultLoopTypes.LOOP));
             }
         }

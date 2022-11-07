@@ -64,7 +64,12 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable, IAlpha
 
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
-        this.entityData.set(LETTER_ID, nbt.contains("Letter", Tag.TAG_STRING) ? nbt.getString("Letter") : "a");
+        if (nbt.contains("Letter", Tag.TAG_STRING)) {
+            String letter = nbt.getString("Letter").toLowerCase(Locale.ROOT);
+            this.entityData.set(LETTER_ID, IDS.contains(letter) ? letter : "a");
+        } else {
+            this.entityData.set(LETTER_ID, "a");
+        }
         this.entityData.set(SHOULD_BE_HOSTILE, nbt.getBoolean("Hostile"));
         this.entityData.set(SHOULD_FREEZE, nbt.getBoolean("Freeze"));
         super.readAdditionalSaveData(nbt);

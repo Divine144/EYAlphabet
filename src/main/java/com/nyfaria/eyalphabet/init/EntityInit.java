@@ -31,7 +31,8 @@ public class EntityInit {
             () -> EntityType.Builder.of(JumpscareFEntity::new, MobCategory.CREATURE).sized(0.7F, 0.7F).updateInterval(1), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<H2Entity>> SPECIAL_H = registerEntity("special_h", () -> EntityType.Builder.of(H2Entity::new, MobCategory.CREATURE).sized(0.7F, 0.7F), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<E2Entity>> SPECIAL_E = registerEntity("special_e", () -> EntityType.Builder.of(E2Entity::new, MobCategory.CREATURE).sized(0.7F, 0.7F), AlphabetEntity::createAttributes);
-    public static final RegistryObject<EntityType<WitherStormEntity>> WITHER_STORM_ENTITY = registerEntity("wither_storm", () -> EntityType.Builder.of(WitherStormEntity::new, MobCategory.MONSTER).sized(5.0f, 5.0f), WitherStormEntity::createAttributes);
+    public static final RegistryObject<EntityType<WitherStormEntity>> WITHER_STORM_ENTITY = registerEntity("wither_storm",
+            () -> EntityType.Builder.of(WitherStormEntity::new, MobCategory.MONSTER).sized(30.0F, 30.0F), WitherStormEntity::createAttributes);
 
     private static <T extends Entity> RegistryObject<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> supplier) {
         return ENTITIES.register(name, () -> supplier.get().build(MODID + ":" + name));

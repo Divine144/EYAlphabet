@@ -27,6 +27,10 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
@@ -78,7 +82,16 @@ public class JumpscareFEntity extends Animal implements IAnimatable, IAlphabetHo
     }
 
     @Override
-    public void registerControllers(AnimationData data) {}
+    public void registerControllers(AnimationData data) {
+        data.addAnimationController(new AnimationController<>(this, "controller", 0, this::animationEvent));
+    }
+
+    protected <T extends IAnimatable> PlayState animationEvent(AnimationEvent<T> event) {
+        if (this.tickJumpscareTicks) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("attack", false));
+        }
+        return PlayState.CONTINUE;
+    }
 
     @Override
     public AnimationFactory getFactory() {

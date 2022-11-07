@@ -29,7 +29,7 @@ public class HostileAlphabetGoal extends MeleeAttackGoal {
     @Override
     public boolean canUse() {
         if (!this.mob.getShouldFreeze()) {
-            if (this.mob.getShouldBeHostile() && this.mob instanceof F2Entity entity && !entity.getShouldAttackI() && !entity.getShouldJumpscare()) {
+            if (this.mob.getShouldBeHostile() && this.mob instanceof F2Entity entity && !entity.getShouldAttackI()) {
                 return true;
             }
             return this.mob.getShouldBeHostile();

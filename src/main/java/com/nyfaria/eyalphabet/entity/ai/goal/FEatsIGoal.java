@@ -25,6 +25,7 @@ public class FEatsIGoal extends TargetGoal {
         if (this.entity.getTarget() != null) {
             timer++;
             if (timer % 30 == 0) {
+                this.entity.setAttacking(false);
                 this.entity.getTarget().kill();
                 timer = 0;
             }
@@ -44,6 +45,7 @@ public class FEatsIGoal extends TargetGoal {
         for (AlphabetEntity e : entitiesList) {
             if ("i".equals(e.getLetterId())) {
                 this.entity.setTarget(e);
+                this.entity.setAttacking(true);
                 break;
             }
         }
@@ -51,6 +53,6 @@ public class FEatsIGoal extends TargetGoal {
 
     @Override
     public boolean canUse() {
-        return this.entity.getShouldAttackI() && !this.entity.getShouldFreeze() && !this.entity.getShouldJumpscare();
+        return this.entity.getShouldAttackI() && !this.entity.getShouldFreeze();
     }
 }

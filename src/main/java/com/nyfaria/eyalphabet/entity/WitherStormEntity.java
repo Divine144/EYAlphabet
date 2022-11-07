@@ -2,6 +2,7 @@ package com.nyfaria.eyalphabet.entity;
 
 import com.nyfaria.eyalphabet.entity.ai.goal.StormFollowTargetGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.FirelightTargetGoal;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -46,6 +47,11 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
         flyingpathnavigation.setCanFloat(true);
         flyingpathnavigation.setCanPassDoors(true);
         return flyingpathnavigation;
+    }
+
+    @Override
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
+        return false;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
