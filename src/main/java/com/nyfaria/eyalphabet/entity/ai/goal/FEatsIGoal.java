@@ -18,16 +18,22 @@ public class FEatsIGoal extends TargetGoal {
 
     // Timer to sync "I" death with "F" open mouth animation timer
     int timer = 0;
+    private int recalcPath = 20;
 
     @Override
     public void tick() {
         super.tick();
         if (this.entity.getTarget() != null) {
-            timer++;
-            if (timer % 30 == 0) {
-                this.entity.setAttacking(false);
-                this.entity.getTarget().kill();
-                timer = 0;
+            if (this.entity.distanceToSqr(this.entity.getTarget()) <= 3 * 3) {
+                timer++;
+                if (timer % 30 == 0) {
+                    this.entity.setAttacking(false);
+                    this.entity.getTarget().kill();
+                    timer = 0;
+                }
+            } else if (this.recalcPath-- <= 0) {
+                this.recalcPath = 20;
+                this.entity.getNavigation().moveTo(this.entity.getTarget(), 1.0D);
             }
         }
         else this.entity.setShouldAttackI(false);

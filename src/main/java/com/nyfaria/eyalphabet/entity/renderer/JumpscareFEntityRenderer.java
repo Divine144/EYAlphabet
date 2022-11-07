@@ -12,8 +12,10 @@ public class JumpscareFEntityRenderer extends AlphabetEntityRenderer<JumpscareFE
 
     @Override
     public void render(JumpscareFEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
         float scale = 1 + 1.5F * (entity.jumpscareTicks / 10.0F);
         poseStack.scale(scale, scale, scale);
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
+        poseStack.popPose();
     }
 }

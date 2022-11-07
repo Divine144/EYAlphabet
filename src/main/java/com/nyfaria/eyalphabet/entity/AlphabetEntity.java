@@ -49,7 +49,7 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable, IAlpha
 
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(LETTER_ID, this instanceof ISpecialAlphabet specialAlphabet ? specialAlphabet.getSpecialId() : "a");
+        this.entityData.define(LETTER_ID, "a");
         this.entityData.define(SHOULD_BE_HOSTILE, false);
         this.entityData.define(SHOULD_FREEZE, false);
     }
@@ -57,8 +57,11 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable, IAlpha
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-        if (!(this instanceof ISpecialAlphabet))
+        if (this instanceof ISpecialAlphabet specialAlphabet) {
+            this.setLetterId(specialAlphabet.getSpecialId());
+        } else {
             this.setLetterId(Util.getRandom(IDS, level.getRandom()));
+        }
         return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
     }
 

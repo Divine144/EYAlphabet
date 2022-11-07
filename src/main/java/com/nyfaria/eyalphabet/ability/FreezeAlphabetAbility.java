@@ -3,35 +3,30 @@ package com.nyfaria.eyalphabet.ability;
 import com.nyfaria.eyalphabet.entity.AlphabetEntity;
 import com.nyfaria.eyalphabet.init.ItemInit;
 import dev._100media.hundredmediaabilities.ability.Ability;
-import it.unimi.dsi.fastutil.ints.Int2FloatMap;
-import it.unimi.dsi.fastutil.ints.Int2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
+import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class FreezeAlphabetAbility extends Ability {
-
-    public static final Object2IntMap<Player> ENTITY = new Object2IntOpenHashMap<>();
-    private static final Int2FloatMap DISTANCE = new Int2FloatOpenHashMap();
+    public static final Object2IntMap<UUID> HELD_ENTITIES = new Object2IntOpenHashMap<>();
+    private static final Int2DoubleMap DISTANCE = new Int2DoubleOpenHashMap();
 
     @Override
     public boolean isHiddenAbility() {
@@ -50,9 +45,9 @@ public class FreezeAlphabetAbility extends Ability {
         ItemStack item = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (item.is(ItemInit.ALPHABET_WAND.get())) {
             if (livingEntity instanceof AlphabetEntity mob) {
-                if (!ENTITY.values().contains(livingEntity.getId())) {
-                    ENTITY.put(player, livingEntity.getId());
-                    DISTANCE.put(livingEntity.getId(), player.distanceTo(livingEntity));
+                if (!HELD_ENTITIES.containsValue(livingEntity.getId())) {
+                    HELD_ENTITIES.put(player.getUUID(), livingEntity.getId());
+                    DISTANCE.put(livingEntity.getId(), player.getEyePosition().distanceTo(livingEntity.getEyePosition()));
                     mob.setShouldFreeze(true);
                 }
             }
@@ -62,55 +57,14 @@ public class FreezeAlphabetAbility extends Ability {
     @Override
     public void executeHeld(ServerLevel level, ServerPlayer player, int tick) {
         super.executeHeld(level, player, tick);
-        int id = ENTITY.getInt(player);
+        int id = HELD_ENTITIES.getInt(player.getUUID());
         LivingEntity livingEntity = (LivingEntity) level.getEntity(id);
-        float distance = DISTANCE.get(id);
-        Vec3 look = player.getLookAngle();
         if (livingEntity != null) {
-            Vec3 targetPos = player.position().add(look.x * distance, look.y * distance, look.z * distance);
-            List<VoxelShape> blockCollisions = new ArrayList<>();
-            AABB aabb = livingEntity.getBoundingBox();
-            level.getBlockCollisions(livingEntity, aabb.expandTowards(targetPos)).forEach(blockCollisions::add);
-            livingEntity.setPos(collideWithShapes(targetPos, aabb, blockCollisions));
+            Vec3 lookVec = player.getLookAngle();
+            Vec3 targetPos = player.getEyePosition().add(lookVec.scale(DISTANCE.get(id))).subtract(0, 0.3D, 0);
+            livingEntity.move(MoverType.SELF, targetPos.subtract(livingEntity.position()));
             livingEntity.hurtMarked = true;
             livingEntity.fallDistance = 0;
-        }
-    }
-
-    private static Vec3 collideWithShapes(Vec3 pDeltaMovement, AABB pEntityBB, List<VoxelShape> pShapes) {
-        if (pShapes.isEmpty()) {
-            return pDeltaMovement;
-        } else {
-            double d0 = pDeltaMovement.x;
-            double d1 = pDeltaMovement.y;
-            double d2 = pDeltaMovement.z;
-            if (d1 != 0.0D) {
-                d1 = Shapes.collide(Direction.Axis.Y, pEntityBB, pShapes, d1);
-                if (d1 != 0.0D) {
-                    pEntityBB = pEntityBB.move(0.0D, d1, 0.0D);
-                }
-            }
-
-            boolean flag = Math.abs(d0) < Math.abs(d2);
-            if (flag && d2 != 0.0D) {
-                d2 = Shapes.collide(Direction.Axis.Z, pEntityBB, pShapes, d2);
-                if (d2 != 0.0D) {
-                    pEntityBB = pEntityBB.move(0.0D, 0.0D, d2);
-                }
-            }
-
-            if (d0 != 0.0D) {
-                d0 = Shapes.collide(Direction.Axis.X, pEntityBB, pShapes, d0);
-                if (!flag && d0 != 0.0D) {
-                    pEntityBB = pEntityBB.move(d0, 0.0D, 0.0D);
-                }
-            }
-
-            if (!flag && d2 != 0.0D) {
-                d2 = Shapes.collide(Direction.Axis.Z, pEntityBB, pShapes, d2);
-            }
-
-            return new Vec3(d0, d1, d2);
         }
     }
 

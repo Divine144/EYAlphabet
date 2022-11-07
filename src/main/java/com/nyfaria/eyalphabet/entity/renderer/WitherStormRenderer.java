@@ -16,7 +16,9 @@ public class WitherStormRenderer extends GeoEntityRenderer<WitherStormEntity> {
 
     @Override
     public void render(WitherStormEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
         poseStack.scale(5, 5, 5);
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
+        poseStack.popPose();
     }
 }

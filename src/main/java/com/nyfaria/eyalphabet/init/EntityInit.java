@@ -25,7 +25,8 @@ public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     private static final List<AttributesRegister<?>> attributeSuppliers = new ArrayList<>();
 
-    public static final RegistryObject<EntityType<AlphabetEntity>> ALPHABET_ENTITY = registerEntity("letter", () -> EntityType.Builder.of(AlphabetEntity::new, MobCategory.CREATURE).sized(0.7F, 0.7F), AlphabetEntity::createAttributes);
+    public static final RegistryObject<EntityType<AlphabetEntity>> ALPHABET_ENTITY = registerEntity("letter",
+            () -> EntityType.Builder.of(AlphabetEntity::new, MobCategory.CREATURE).sized(0.7F, 0.7F).updateInterval(1), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<F2Entity>> SPECIAL_F = registerEntity("special_f", () -> EntityType.Builder.of(F2Entity::new, MobCategory.CREATURE).sized(0.7F, 0.7F), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<JumpscareFEntity>> JUMPSCARE_F = registerEntity("jumpscare_f",
             () -> EntityType.Builder.of(JumpscareFEntity::new, MobCategory.CREATURE).sized(0.7F, 0.7F).updateInterval(1), AlphabetEntity::createAttributes);
