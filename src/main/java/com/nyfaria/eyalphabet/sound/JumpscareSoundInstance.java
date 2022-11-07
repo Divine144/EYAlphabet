@@ -17,10 +17,9 @@ public class JumpscareSoundInstance extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
-        if (this.entity.isRemoved()) {
-            this.stop();
+        if (this.entity.isRemoved())
             return;
-        }
+
         this.x = this.entity.getX();
         this.y = this.entity.getY();
         this.z = this.entity.getZ();
