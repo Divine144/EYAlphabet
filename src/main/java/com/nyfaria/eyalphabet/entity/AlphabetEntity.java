@@ -1,25 +1,27 @@
 package com.nyfaria.eyalphabet.entity;
 
-import com.nyfaria.eyalphabet.EYAlphabet;
 import com.nyfaria.eyalphabet.entity.ai.goal.AlphabetSetTargetGoal;
 import com.nyfaria.eyalphabet.entity.ai.goal.HostileAlphabetGoal;
-import com.nyfaria.eyalphabet.util.Util;
+import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -30,17 +32,14 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-import java.util.Random;
+import java.util.List;
+import java.util.Locale;
 
-public class AlphabetEntity extends PathfinderMob implements IAnimatable {
-
-    private static final EntityDataAccessor<Integer> LETTER_ID = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.INT);
+public class AlphabetEntity extends PathfinderMob implements IAnimatable, IAlphabetHolder {
+    private static final EntityDataAccessor<String> LETTER_ID = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SHOULD_BE_HOSTILE = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SHOULD_FREEZE = SynchedEntityData.defineId(AlphabetEntity.class, EntityDataSerializers.BOOLEAN);
-
-    private ResourceLocation modelLocation;
-    private ResourceLocation textureLocation;
-    private ResourceLocation animationLocation;
+    private static final List<String> IDS = List.of("a", "c", "e", "f", "g", "h", "m", "n", "o", "p", "r", "s", "t", "u", "w", "i", "y");
 
     protected final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
@@ -50,18 +49,22 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
 
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(LETTER_ID, this instanceof ISpecialAlphabet special ? special.getSpecialID() : RandomSource.create().nextIntBetweenInclusive(0, 16));
-        String identifier = Util.getLetterFromID(this.getLetterID());
-        this.modelLocation = new ResourceLocation(EYAlphabet.MODID, "geo/letter_" + identifier + ".geo.json");
-        this.textureLocation = new ResourceLocation(EYAlphabet.MODID, "textures/entity/letter_" + identifier + ".png");
-        this.animationLocation = new ResourceLocation(EYAlphabet.MODID, "animations/letter_" + identifier + ".animation.json");
+        this.entityData.define(LETTER_ID, this instanceof ISpecialAlphabet specialAlphabet ? specialAlphabet.getSpecialId() : "a");
         this.entityData.define(SHOULD_BE_HOSTILE, false);
         this.entityData.define(SHOULD_FREEZE, false);
     }
 
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+        if (!(this instanceof ISpecialAlphabet))
+            this.setLetterId(Util.getRandom(IDS, level.getRandom()));
+        return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+    }
+
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
-        this.entityData.set(LETTER_ID, nbt.getInt("Letter"));
+        this.entityData.set(LETTER_ID, nbt.contains("Letter", Tag.TAG_STRING) ? nbt.getString("Letter") : "a");
         this.entityData.set(SHOULD_BE_HOSTILE, nbt.getBoolean("Hostile"));
         this.entityData.set(SHOULD_FREEZE, nbt.getBoolean("Freeze"));
         super.readAdditionalSaveData(nbt);
@@ -69,7 +72,7 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
 
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag nbt) {
-        nbt.putInt("Letter", this.getLetterID());
+        nbt.putString("Letter", this.getLetterId());
         nbt.putBoolean("Hostile", this.entityData.get(SHOULD_BE_HOSTILE));
         nbt.putBoolean("Freeze", this.entityData.get(SHOULD_FREEZE));
         super.addAdditionalSaveData(nbt);
@@ -146,8 +149,13 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
         return factory;
     }
 
-    public int getLetterID() {
+    @Override
+    public String getLetterId() {
         return this.entityData.get(LETTER_ID);
+    }
+
+    public void setLetterId(String id) {
+        this.entityData.set(LETTER_ID, id.toLowerCase(Locale.ROOT));
     }
 
     public boolean getShouldBeHostile() {
@@ -176,17 +184,5 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable {
             }
         }
         return PlayState.CONTINUE;
-    }
-
-    public ResourceLocation getModelLocation() {
-        return modelLocation;
-    }
-
-    public ResourceLocation getTextureLocation() {
-        return textureLocation;
-    }
-
-    public ResourceLocation getAnimationLocation() {
-        return animationLocation;
     }
 }

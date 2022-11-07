@@ -51,7 +51,7 @@ public class E2Entity extends AlphabetEntity implements ISpecialAlphabet {
     }
 
     @Override
-    public int getSpecialID() {
-        return 3;
+    public String getSpecialId() {
+        return "e";
     }
 }

@@ -51,7 +51,7 @@ public class H2Entity extends AlphabetEntity implements ISpecialAlphabet {
     }
 
     @Override
-    public int getSpecialID() {
-        return 6;
+    public String getSpecialId() {
+        return "h";
     }
 }

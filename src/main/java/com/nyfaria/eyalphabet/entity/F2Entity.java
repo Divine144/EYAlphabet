@@ -146,7 +146,7 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
     }
 
     @Override
-    public int getSpecialID() {
-        return 4;
+    public String getSpecialId() {
+        return "f";
     }
 }

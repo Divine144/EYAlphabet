@@ -42,7 +42,7 @@ public class FEatsIGoal extends TargetGoal {
         super.start();
         var entitiesList = Util.getEntitiesInRange(this.entity, AlphabetEntity.class, 3, 3, 3, p -> !(p instanceof ISpecialAlphabet));
         for (AlphabetEntity e : entitiesList) {
-            if (e.getLetterID() == 16) {
+            if ("i".equals(e.getLetterId())) {
                 this.entity.setTarget(e);
                 break;
             }

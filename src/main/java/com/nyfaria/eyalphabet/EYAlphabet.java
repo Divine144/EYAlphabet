@@ -9,6 +9,7 @@ import com.nyfaria.eyalphabet.init.AbilityInit;
 import com.nyfaria.eyalphabet.init.BlockInit;
 import com.nyfaria.eyalphabet.init.EntityInit;
 import com.nyfaria.eyalphabet.init.ItemInit;
+import com.nyfaria.eyalphabet.init.SoundInit;
 import com.nyfaria.eyalphabet.network.NetworkHandler;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -39,6 +40,7 @@ public class EYAlphabet {
         BlockInit.BLOCKS.register(bus);
         BlockInit.BLOCK_ENTITIES.register(bus);
         AbilityInit.ABILITIES.register(bus);
+        SoundInit.SOUNDS.register(bus);
         PlayerHolderAttacher.register();
         GlobalCapabilityAttacher.register();
         GeckoLib.initialize();

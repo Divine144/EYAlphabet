@@ -2,6 +2,7 @@ package com.nyfaria.eyalphabet.network;
 
 import com.google.common.collect.ImmutableList;
 import com.nyfaria.eyalphabet.EYAlphabet;
+import com.nyfaria.eyalphabet.network.packet.clientbound.StartJumpscareSoundPacket;
 import dev._100media.capabilitysyncer.network.SimpleEntityCapabilityStatusPacket;
 import dev._100media.capabilitysyncer.network.SimpleLevelCapabilityStatusPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +26,7 @@ public class NetworkHandler {
         List<BiConsumer<SimpleChannel, Integer>> packets = ImmutableList.<BiConsumer<SimpleChannel, Integer>>builder()
                 .add(SimpleEntityCapabilityStatusPacket::register)
                 .add(SimpleLevelCapabilityStatusPacket::register)
+                .add(StartJumpscareSoundPacket::register)
                 .build();
 
         packets.forEach(consumer -> consumer.accept(INSTANCE, getNextId()));

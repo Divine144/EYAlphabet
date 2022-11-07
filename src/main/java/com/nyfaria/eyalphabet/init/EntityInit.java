@@ -27,6 +27,8 @@ public class EntityInit {
 
     public static final RegistryObject<EntityType<AlphabetEntity>> ALPHABET_ENTITY = registerEntity("letter", () -> EntityType.Builder.of(AlphabetEntity::new, MobCategory.CREATURE).sized(0.7F, 0.7F), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<F2Entity>> SPECIAL_F = registerEntity("special_f", () -> EntityType.Builder.of(F2Entity::new, MobCategory.CREATURE).sized(0.7F, 0.7F), AlphabetEntity::createAttributes);
+    public static final RegistryObject<EntityType<JumpscareFEntity>> JUMPSCARE_F = registerEntity("jumpscare_f",
+            () -> EntityType.Builder.of(JumpscareFEntity::new, MobCategory.CREATURE).sized(0.7F, 0.7F).updateInterval(1), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<H2Entity>> SPECIAL_H = registerEntity("special_h", () -> EntityType.Builder.of(H2Entity::new, MobCategory.CREATURE).sized(0.7F, 0.7F), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<E2Entity>> SPECIAL_E = registerEntity("special_e", () -> EntityType.Builder.of(E2Entity::new, MobCategory.CREATURE).sized(0.7F, 0.7F), AlphabetEntity::createAttributes);
     public static final RegistryObject<EntityType<WitherStormEntity>> WITHER_STORM_ENTITY = registerEntity("wither_storm", () -> EntityType.Builder.of(WitherStormEntity::new, MobCategory.MONSTER).sized(5.0f, 5.0f), WitherStormEntity::createAttributes);
