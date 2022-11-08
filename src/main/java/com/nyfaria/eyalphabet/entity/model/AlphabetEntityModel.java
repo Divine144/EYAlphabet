@@ -2,15 +2,13 @@ package com.nyfaria.eyalphabet.entity.model;
 
 import com.nyfaria.eyalphabet.EYAlphabet;
 import com.nyfaria.eyalphabet.entity.AlphabetEntity;
-import com.nyfaria.eyalphabet.entity.IAlphabetHolder;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AlphabetEntityModel<T extends IAlphabetHolder & IAnimatable> extends AnimatedGeoModel<T> {
+public class AlphabetEntityModel<T extends AlphabetEntity> extends AnimatedGeoModel<T> {
     private final Map<String, ResourceLocation> modelCache = new HashMap<>();
     private final Map<String, ResourceLocation> textureCache = new HashMap<>();
     private final Map<String, ResourceLocation> animationCache = new HashMap<>();

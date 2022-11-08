@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 
 public class JumpscareFEntityRenderer extends AlphabetEntityRenderer<JumpscareFEntity> {
+
     public JumpscareFEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }

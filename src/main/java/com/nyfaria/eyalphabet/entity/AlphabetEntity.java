@@ -190,7 +190,8 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable, IAlpha
             else {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", ILoopType.EDefaultLoopTypes.LOOP));
             }
+            return PlayState.CONTINUE;
         }
-        return PlayState.CONTINUE;
+        return PlayState.STOP;
     }
 }

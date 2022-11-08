@@ -76,8 +76,7 @@ public class HostileAlphabetGoal extends MeleeAttackGoal {
     public void tick() {
         super.tick();
         this.mob.setAggressive(this.getTicksUntilNextAttack() < this.getAttackInterval() / 2);
-        timer++;
-        if (timer >= EYAlphabetConfig.INSTANCE.allLettersAttackEachOtherTimer.get() * 20) {
+        if (++timer >= EYAlphabetConfig.INSTANCE.allLettersAttackEachOtherTimer.get() * 20) {
             this.mob.setShouldBeHostile(false);
             timer = 0;
         }

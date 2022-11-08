@@ -124,11 +124,7 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
         if (!this.getShouldFreeze()) {
             if (this.getShouldAttackI() && this.isAttacking()) {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("attack", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
-            }
-            // else if (this.getShouldJumpscare()) {
-            //     event.getController().setAnimation(new AnimationBuilder().addAnimation("jumpscare", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
-            // }
-            else if (event.isMoving()) {
+            } else if (event.isMoving()) {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("walk", ILoopType.EDefaultLoopTypes.LOOP));
             } else {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", ILoopType.EDefaultLoopTypes.LOOP));

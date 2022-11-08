@@ -25,13 +25,13 @@ public class FEatsIGoal extends TargetGoal {
         super.tick();
         if (this.entity.getTarget() != null) {
             if (this.entity.distanceToSqr(this.entity.getTarget()) <= 3 * 3) {
-                timer++;
-                if (timer % 30 == 0) {
+                if (++timer % 30 == 0) {
                     this.entity.setAttacking(false);
                     this.entity.getTarget().kill();
                     timer = 0;
                 }
-            } else if (this.recalcPath-- <= 0) {
+            }
+            else if (this.recalcPath-- <= 0) {
                 this.recalcPath = 20;
                 this.entity.getNavigation().moveTo(this.entity.getTarget(), 1.0D);
             }

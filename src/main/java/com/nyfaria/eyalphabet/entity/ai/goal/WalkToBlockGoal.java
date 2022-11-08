@@ -6,6 +6,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.pathfinder.Path;
+import org.jetbrains.annotations.NotNull;
 
 public class WalkToBlockGoal extends MoveToBlockGoal {
 
@@ -18,7 +19,7 @@ public class WalkToBlockGoal extends MoveToBlockGoal {
     }
 
     @Override
-    protected BlockPos getMoveToTarget() {
+    protected @NotNull BlockPos getMoveToTarget() {
         return blockPos;
     }
 
