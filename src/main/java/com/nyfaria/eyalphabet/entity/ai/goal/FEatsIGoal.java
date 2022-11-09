@@ -25,6 +25,7 @@ public class FEatsIGoal extends TargetGoal {
         super.tick();
         if (this.entity.getTarget() != null) {
             if (this.entity.distanceToSqr(this.entity.getTarget()) <= 3 * 3) {
+                this.entity.setAttacking(true);
                 if (++timer % 30 == 0) {
                     this.entity.setAttacking(false);
                     this.entity.getTarget().kill();
@@ -51,7 +52,6 @@ public class FEatsIGoal extends TargetGoal {
         for (AlphabetEntity e : entitiesList) {
             if ("i".equals(e.getLetterId())) {
                 this.entity.setTarget(e);
-                this.entity.setAttacking(true);
                 break;
             }
         }

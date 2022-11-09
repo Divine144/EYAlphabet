@@ -59,7 +59,8 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable, IAlpha
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
         if (this instanceof ISpecialAlphabet specialAlphabet) {
             this.setLetterId(specialAlphabet.getSpecialId());
-        } else {
+        }
+        else {
             this.setLetterId(Util.getRandom(IDS, level.getRandom()));
         }
         return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
@@ -70,7 +71,8 @@ public class AlphabetEntity extends PathfinderMob implements IAnimatable, IAlpha
         if (nbt.contains("Letter", Tag.TAG_STRING)) {
             String letter = nbt.getString("Letter").toLowerCase(Locale.ROOT);
             this.entityData.set(LETTER_ID, IDS.contains(letter) ? letter : "a");
-        } else {
+        }
+        else {
             this.entityData.set(LETTER_ID, "a");
         }
         this.entityData.set(SHOULD_BE_HOSTILE, nbt.getBoolean("Hostile"));

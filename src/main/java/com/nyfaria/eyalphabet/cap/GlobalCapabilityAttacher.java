@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 public class GlobalCapabilityAttacher extends CapabilityAttacher {
 
     private static final Class<GlobalCapability> CAPABILITY_CLASS = GlobalCapability.class;
-    public static final Capability<GlobalCapability> GLOBAL_LEVEL_CAPABILITY = getCapability(new CapabilityToken<>() {});
+    public static final Capability<GlobalCapability> GLOBAL_LEVEL_CAPABILITY = getCapability(new CapabilityToken<>(){});
     public static final ResourceLocation GLOBAL_LEVEL_CAPABILITY_RL = new ResourceLocation(EYAlphabet.MODID, "global_level_capability");
 
     @SuppressWarnings("ConstantConditions")
