@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class UnfreezeAlphabetAbility extends Ability {
 
+    // Random change
     @Override
     public boolean isHiddenAbility() {
         return true;
