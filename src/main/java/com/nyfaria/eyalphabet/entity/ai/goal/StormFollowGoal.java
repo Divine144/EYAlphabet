@@ -5,6 +5,7 @@ import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
@@ -19,10 +20,7 @@ import java.util.EnumSet;
 import java.util.UUID;
 
 public class StormFollowGoal extends Goal {
-    public static final int TELEPORT_WHEN_DISTANCE_IS = 12;
-    private static final int MIN_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 2;
-    private static final int MAX_HORIZONTAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 3;
-    private static final int MAX_VERTICAL_DISTANCE_FROM_PLAYER_WHEN_TELEPORTING = 1;
+
     private final Mob mob;
     private LivingEntity owner;
     private final LevelReader level;
@@ -103,16 +101,16 @@ public class StormFollowGoal extends Goal {
      * Keep ticking a continuous task that has already been started
      */
     public void tick() {
-        this.mob.getLookControl().setLookAt(this.owner, 10.0F, (float) this.mob.getMaxHeadXRot());
+        double d0 = this.owner.getEyeY();
+        this.mob.getLookControl().setLookAt(this.owner.getX(), d0, this.owner.getZ());
         if (--this.timeToRecalcPath <= 0) {
             this.timeToRecalcPath = this.adjustedTickDelay(10);
             if (!this.mob.isLeashed() && !this.mob.isPassenger()) {
-                if (this.mob.distanceToSqr(this.owner) >= 144.0D) {
+                if (this.mob.distanceToSqr(this.owner) >= 512.0D) {
                     this.teleportToOwner();
                 } else {
                     this.navigation.moveTo(this.owner, this.speedModifier);
                 }
-
             }
         }
     }
