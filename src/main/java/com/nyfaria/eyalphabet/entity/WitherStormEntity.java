@@ -30,7 +30,7 @@ public class WitherStormEntity extends PathfinderMob implements IAnimatable {
 
     public WitherStormEntity(EntityType<? extends WitherStormEntity> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new FlyingMoveControl(this, 10, false);
+        this.moveControl = new FlyingMoveControl(this, 0, false);
     }
 
     @Override

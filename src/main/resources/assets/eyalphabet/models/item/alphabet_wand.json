@@ -2,7 +2,10 @@
   "parent":"forge:item/default",
   "loader":"forge:separate-perspective",
   "base": {
-    "parent": "eyalphabet:item/alphabet_wand_seperate"
+    "parent": "minecraft:item/generated",
+    "textures": {
+      "layer0": "eyalphabet:item/alphabet_wand"
+    }
   },
   "perspectives": {
     "thirdperson_lefthand": {

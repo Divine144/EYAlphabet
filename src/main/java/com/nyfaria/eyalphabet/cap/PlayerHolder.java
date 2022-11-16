@@ -3,6 +3,7 @@ package com.nyfaria.eyalphabet.cap;
 import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
 import com.nyfaria.eyalphabet.network.NetworkHandler;
 import dev._100media.capabilitysyncer.core.EntityCapability;
+import dev._100media.capabilitysyncer.core.ItemStackCapability;
 import dev._100media.capabilitysyncer.network.EntityCapabilityStatusPacket;
 import dev._100media.capabilitysyncer.network.LevelCapabilityStatusPacket;
 import dev._100media.capabilitysyncer.network.SimpleEntityCapabilityStatusPacket;
@@ -48,6 +49,7 @@ public class PlayerHolder extends EntityCapability {
 
     public void setTimer(int timer) {
         this.timer = timer;
+        updateTracking();
     }
 
     public int getTimerStagger() {

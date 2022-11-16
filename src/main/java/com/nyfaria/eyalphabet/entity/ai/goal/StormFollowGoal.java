@@ -108,7 +108,8 @@ public class StormFollowGoal extends Goal {
             if (!this.mob.isLeashed() && !this.mob.isPassenger()) {
                 if (this.mob.distanceToSqr(this.owner) >= 512.0D) {
                     this.teleportToOwner();
-                } else {
+                }
+                else {
                     this.navigation.moveTo(this.owner, this.speedModifier);
                 }
             }
@@ -117,7 +118,6 @@ public class StormFollowGoal extends Goal {
 
     private void teleportToOwner() {
         BlockPos blockpos = this.owner.blockPosition();
-
         for (int i = 0; i < 10; ++i) {
             int j = this.randomIntInclusive(-3, 3);
             int k = this.randomIntInclusive(-1, 1);
@@ -127,7 +127,6 @@ public class StormFollowGoal extends Goal {
                 return;
             }
         }
-
     }
 
     private boolean maybeTeleportTo(int pX, int pY, int pZ) {

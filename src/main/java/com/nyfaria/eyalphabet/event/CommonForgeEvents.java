@@ -7,8 +7,7 @@ import com.nyfaria.eyalphabet.cap.GlobalCapabilityAttacher;
 import com.nyfaria.eyalphabet.cap.PlayerHolder;
 import com.nyfaria.eyalphabet.cap.PlayerHolderAttacher;
 import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
-import com.nyfaria.eyalphabet.entity.AlphabetEntity;
-import com.nyfaria.eyalphabet.entity.F2Entity;
+import com.nyfaria.eyalphabet.entity.*;
 import com.nyfaria.eyalphabet.util.Util;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -38,7 +37,8 @@ public class CommonForgeEvents {
                                 var f2EntityList = Util.getEntitiesInRange(EntityArgument.getPlayer(context, "relativePlayer"), F2Entity.class, 30, 30, 30, p -> true);
                                 f2EntityList.forEach(p -> p.setShouldAttackI(true));
                                 return Command.SINGLE_SUCCESS;
-                })));
+                }))
+        );
         dispatcher.register(Commands.literal("alphabets")
                     .then(Commands.literal("hostile")
                             .then(Commands.argument("shouldBeHostile", BoolArgumentType.bool())
@@ -48,10 +48,7 @@ public class CommonForgeEvents {
                                             var alphabetList = Util.getEntitiesInRange(EntityArgument.getPlayer(context, "relativePlayer"), AlphabetEntity.class, range, range, range, p -> true);
                                             alphabetList.forEach(p -> p.setShouldBeHostile(BoolArgumentType.getBool(context, "shouldBeHostile")));
                                             return Command.SINGLE_SUCCESS;
-                                        }))
-                            )
-
-                    )
+                                        }))))
         );
         dispatcher.register(Commands.literal("giant_pit")
                 .then(Commands.literal("create")

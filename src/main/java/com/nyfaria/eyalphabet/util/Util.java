@@ -1,7 +1,14 @@
 package com.nyfaria.eyalphabet.util;
 
+import com.nyfaria.eyalphabet.config.EYAlphabetConfig;
+import com.nyfaria.eyalphabet.entity.AlphabetEntity;
+import com.nyfaria.eyalphabet.entity.H2Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import java.util.Comparator;
@@ -19,6 +26,19 @@ public class Util {
                         new AABB(relativeEntity.getX() - xBound, relativeEntity.getY() - yBound, relativeEntity.getZ() - zBound,
                                 relativeEntity.getX() + xBound, relativeEntity.getY() + yBound, relativeEntity.getZ() + zBound))
                 .stream().sorted(getEntityComparator(relativeEntity)).filter(filter).collect(Collectors.toList());
+    }
+
+    public static BlockPos getPosFromConfig(AlphabetEntity entity) {
+        BlockPos pairPos = new BlockPos(0, 0, 0);
+        Level level = entity.level;
+        GlobalPos globalPos = entity instanceof H2Entity ? EYAlphabetConfig.INSTANCE.h2blockPosition.apply(level) : EYAlphabetConfig.INSTANCE.e2blockPosition.apply(level);
+        if (globalPos != null && level.getServer() != null) {
+            ServerLevel otherDimLevel = level.getServer().getLevel(globalPos.dimension());
+            if (otherDimLevel != null) {
+                pairPos = globalPos.pos();
+            }
+        }
+        return pairPos;
     }
 
     /**

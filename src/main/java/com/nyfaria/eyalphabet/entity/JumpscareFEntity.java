@@ -8,8 +8,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
@@ -43,7 +41,6 @@ public class JumpscareFEntity extends AlphabetEntity implements IAnimatable, ISp
     @Override
     public void aiStep() {
         super.aiStep();
-
         if (this.level.isClientSide && this.tickJumpscareTicks && this.jumpscareTicks < 10) {
             this.jumpscareTicks++;
         }
@@ -55,7 +52,6 @@ public class JumpscareFEntity extends AlphabetEntity implements IAnimatable, ISp
         this.goalSelector.addGoal(0, new JumpscareGoal());
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new PanicGoal(this, 2.0D));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1.25D, Ingredient.of(Items.WHEAT), false));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -121,7 +117,6 @@ public class JumpscareFEntity extends AlphabetEntity implements IAnimatable, ISp
                 JumpscareFEntity.this.setYHeadRot(pYRot);
             });
             this.getXRot(eyePos).ifPresent(JumpscareFEntity.this::setXRot);
-
             NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> JumpscareFEntity.this), new StartJumpscareSoundPacket(JumpscareFEntity.this.getId()));
         }
 

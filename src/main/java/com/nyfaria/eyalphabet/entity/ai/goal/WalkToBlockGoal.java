@@ -1,9 +1,11 @@
 package com.nyfaria.eyalphabet.entity.ai.goal;
 
 import com.nyfaria.eyalphabet.entity.AlphabetEntity;
+import com.nyfaria.eyalphabet.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
@@ -20,22 +22,36 @@ public class WalkToBlockGoal extends MoveToBlockGoal {
 
     @Override
     protected @NotNull BlockPos getMoveToTarget() {
-        return blockPos;
+        return this.blockPos;
     }
 
     @Override
     public double acceptedDistance() {
-        return 0.1D;
+        return 0D;
     }
 
     @Override
     public void tick() {
         if (!blockPos.closerToCenterThan(this.mob.position(), this.acceptedDistance())) {
-            Path path = mob.getNavigation().createPath(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 1);
-            if (path != null) {
-                this.mob.getNavigation().moveTo(path, this.speedModifier);
+            ++this.tryTicks;
+            if (this.shouldRecalculatePath()) {
+                Path path = mob.getNavigation().createPath(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0);
+                if (path != null) {
+                    this.mob.getNavigation().moveTo(path, this.speedModifier);
+                }
             }
         }
+        if (blockPos.closerToCenterThan(this.mob.position(), 2D)) {
+            Util.getEntitiesInRange(this.mob, Player.class, 125, 50, 125, p -> true)
+                    .stream()
+                    .findFirst()
+                    .ifPresent(player -> this.mob.getLookControl().setLookAt(player));
+        }
+    }
+
+    @Override
+    public boolean shouldRecalculatePath() {
+        return tryTicks % 20 == 0;
     }
 
     @Override

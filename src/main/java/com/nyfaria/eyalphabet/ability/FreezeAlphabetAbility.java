@@ -104,8 +104,6 @@ public class FreezeAlphabetAbility extends Ability {
                 }
             }
         }
-
         return entity == null ? null : new EntityHitResult(entity);
-
     }
 }

@@ -22,6 +22,7 @@ import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 
 public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
+
     private static final EntityDataAccessor<Boolean> SHOULD_ATTACK_I = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> ATTACKING = SynchedEntityData.defineId(F2Entity.class, EntityDataSerializers.BOOLEAN);
 
@@ -124,9 +125,11 @@ public class F2Entity extends AlphabetEntity implements ISpecialAlphabet {
         if (!this.getShouldFreeze()) {
             if (this.getShouldAttackI() && this.isAttacking()) {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("attack", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
-            } else if (event.isMoving()) {
+            }
+            else if (event.isMoving()) {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("walk", ILoopType.EDefaultLoopTypes.LOOP));
-            } else {
+            }
+            else {
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", ILoopType.EDefaultLoopTypes.LOOP));
             }
         }
